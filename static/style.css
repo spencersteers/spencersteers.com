@@ -1,0 +1,113 @@
+@media screen and (min-device-width: 800px) { 
+    body { 
+        font-size: 100%;
+        width: 100%;
+        height: 100%;
+        background-image: url("header-mockup-10.png");
+    } 
+
+    #links li {
+        font-size: 1.5em;
+    }
+}
+@media only screen and (max-device-width: 480px) {
+    body {
+        font-size: 50%;
+        width: 100%;
+        background-image: url("header-mockup-10.png");
+    }
+    h2 {
+        margin-top: 10px;
+    }
+    #links li {
+        font-size: 2.2em
+    }
+}
+body {
+    padding: 0;
+    margin: 0;
+    border: 0;
+
+    
+    background-repeat: repeat;
+    background-position: center;
+
+    /*/background-size: 100% auto;*/
+
+    -webkit-animation: pulse 5s infinite alternate linear;
+    -moz-animation: pulse 5s infinite alternate linear;
+}
+
+#content {
+    min-width: 320px;
+    margin: 80px auto; 
+    position: relative;
+    z-index: 1;
+    max-width: 960px;
+}
+
+header {
+    text-align: center;
+    padding-bottom: 30px;
+}
+
+h1 {
+    color: white;
+    font-size: 7em;
+    font-family: 'Podkova', serif;
+    text-shadow: 3px 3px rgba(255,255,255,0.4);
+    text-transform: uppercase;
+}
+
+h2 {
+    color: white;
+    font-size: 3em;
+    font-family: 'Podkova', serif;
+    text-shadow: 1px 2px rgba(255,255,255,0.4);
+    font-style: italic;
+    max-width: 940px;
+}
+
+#links {
+    position: relative;
+    margin: 0 auto; 
+    padding: 0;
+    list-style: none;
+    text-align: center;
+}
+
+#links li {
+    color: white;
+    display: inline-block;
+    padding: 5px;
+    font-family: 'Podkova', serif;
+    text-shadow: 1px 2px rgba(255,255,255,0.4);
+}
+
+#links li a:visited {
+    color: white;
+}
+
+#links li a {
+    color: white;
+    text-decoration: none;
+}
+
+#links li a:hover {
+    color: white;
+    text-decoration: underline;
+}
+
+
+
+@-webkit-keyframes pulse {
+    0%   { background-color: rgba(255, 255, 255, 0.4); } 
+
+    100% { background-color: rgba(50, 0, 225, 0.4); }
+}
+
+@-moz-keyframes pulse {
+    0%   { background-color: rgba(255, 255, 255, 0.4); } 
+
+    100% { background-color: rgba(50, 0, 225, 0.4); }
+}
