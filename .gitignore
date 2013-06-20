@@ -1,6 +1,7 @@
 # App Engine / Site Verification
 static/googleb839d343ce1ce218.html
 app.yaml
+.DS_Store
 
 *.py[cod]
 
