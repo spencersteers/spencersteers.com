@@ -115,11 +115,6 @@ $('#text').height(screen_height);
 $('#about').height(screen_height); 
 
 $(function() {
-  
-  // var screen_height = window.innerHeight;
-  // var screen_width = window.innerWidth;
-  // $('#text').height(screen_height);
-  // $('#about').height(screen_height);  
   $('#text').append('<div class="selfevident last">SPENCERSTEERS</div>');
   $('#text .selfevident.last').autoTextSize(40, screen_width, false);
   
@@ -148,17 +143,9 @@ $(function() {
   $('.selfevident.last').before((append_array.join('')));
 
   $("#about").first().css("padding-top",  (screen_height - $("#about .links").first().height()) / 2);
-
-
 });
 
 $("a[href='#bottom']").click(function() {
-  $("html, body").animate({ scrollTop: $(document).height() }, "slow");
+  $("html, body").animate({ scrollTop: $(document).height() }, "fast");
   return false;
 });
-
-
-
-
-
-//append_array[a++] = '<div class="selfevident" style="font-size:'+ i +'px; top:' + i / 2.5 + '%; color:rgba(0,0,0,' + (i / 100) + ');>'
