@@ -109,12 +109,17 @@
   };
 })(jQuery);
 
+var screen_height = window.innerHeight;
+var screen_width = window.innerWidth;
+$('#text').height(screen_height);
+$('#about').height(screen_height); 
+
 $(function() {
   
-  var screen_height = window.innerHeight;
-  var screen_width = window.innerWidth;
-  $('#text').height(screen_height);
-  $('#about').height(screen_height);  
+  // var screen_height = window.innerHeight;
+  // var screen_width = window.innerWidth;
+  // $('#text').height(screen_height);
+  // $('#about').height(screen_height);  
   $('#text').append('<div class="selfevident last">SPENCERSTEERS</div>');
   $('#text .selfevident.last').autoTextSize(40, screen_width, false);
   
