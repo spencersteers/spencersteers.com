@@ -39,10 +39,18 @@ html, body {
   color: white;
 }
 
-.chevron {
+a[href='#bottom'] {
+  display: block;
   position: absolute;
   bottom: 5px;
-  left: 50%;
+  width: 10%;
+  margin-right: 45%;
+  margin-left: 45%;
+}
+
+.chevron {
+  display: inline-block;
+  position: relative;
   padding: 0px;
   height:100px;
   width: 6px;
