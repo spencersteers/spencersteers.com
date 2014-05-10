@@ -12,6 +12,7 @@ html, body {
   width: 100%;
   text-align: center;
   background-color: black;
+  position: relative;
 }
 
 .selfevident {
@@ -98,6 +99,7 @@ a[href='#bottom'] {
 
 
 #about {
+  position: relative;
   box-sizing: border-box;
   background-color: rgba(40, 51, 181, 1);
   color: white;
@@ -117,6 +119,7 @@ a[href='#bottom'] {
 .links ul {
   text-align: center;
   list-style: none;
+  padding: 0;
 }
 .links li {
   font-size: 2.2em;
@@ -128,6 +131,6 @@ a {
 }
 a:hover {
   color: white;
-  text-decoration: underline
+  text-decoration: none
 }
   
