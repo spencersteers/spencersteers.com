@@ -25,11 +25,7 @@ html, body {
   top: 65%;
   font-size: 1000px;
   color: white;
-  text-shadow:
-  -2px -2px 0 #000,  
-  2px -2px 0 #000,
-  -2px 2px 0 #000,
-  2px 2px 0 #000;
+  text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000;
 }
 
 #about-button {
@@ -115,6 +111,7 @@ a[href='#bottom'] {
 .links h1 {
   margin-top: 0;
   font-size: 138px;
+  font-weight: 100;
 }
 .links ul {
   text-align: center;
