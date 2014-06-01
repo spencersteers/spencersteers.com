@@ -1,0 +1,21 @@
+{
+  "name": "threejs-controls",
+  "description": "Three.js controls",
+  "keywords": [
+    "threejs",
+    "controls",
+    "three.js"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/Tomesch/threejs-controls",
+  "_release": "0c40bcb193",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "0c40bcb193a89590c9afe59d89bf5032bf6ee666"
+  },
+  "_source": "git://github.com/Tomesch/threejs-controls.git",
+  "_target": "*",
+  "_originalSource": "threejs-controls",
+  "_direct": true
+}
