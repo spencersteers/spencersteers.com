@@ -11,10 +11,16 @@ var camera;
 var renderer;
 var scene;
 var composer;
+var textComposer;
+var textScene;
 
 
-init();
-render();
+if (Detector.webgl) {
+  init();
+  animate();
+}
+else
+  $("#nowebgl").show();
 
 
 
@@ -22,16 +28,19 @@ window.addEventListener('resize', onWindowResize, false);
 document.addEventListener('mousemove', onDocumentMouseMove, false);
 
 function init() {
-
-  scene = new THREE.Scene();
-
+  
   renderer = new THREE.WebGLRenderer();
-  renderer.sortObjects = false;
   renderer.autoClearColor = false;
+  renderer.setClearColor(0x000000, 0);
   renderer.setSize(WIDTH, HEIGHT);
   
   var $container = $('#container');
   $container.append(renderer.domElement);
+
+  scene = new THREE.Scene();
+  // scene.fog = new THREE.Fog(0x000000, 1, 1000);
+
+
 
   camera = new THREE.PerspectiveCamera(VIEW_ANGLE, ASPECT, NEAR, FAR);
   camera.position.z = 10;
@@ -39,7 +48,9 @@ function init() {
   scene.add(camera);
 
 
-  draw_text("SPENCER STEERS");
+  // textScene = new THREE.Scene();
+  scene.add(draw_text("SPENCER STEERS"));
+
   drawParticles();
 
   // post processing 
@@ -52,31 +63,30 @@ function init() {
 
   var effect1 = new THREE.ShaderPass(THREE.DotScreenShader);
   effect1.uniforms.scale.value = 1;
-  // composer.addPass(effect1);
+  composer.addPass(effect1);
 
   var effect2 = new THREE.ShaderPass(THREE.RGBShiftShader);
-  effect2.uniforms.amount.value = 0.00015;
+  effect2.uniforms.amount.value = 0.0001;
   effect2.renderToScreen = true;
   composer.addPass(effect2);
+
 }
 
-function render() {
-  update();
-
-  requestAnimationFrame(render); 
-  renderer.clear();
-  composer.render();
-}
-
-function update() {
-  camera.position.x += (MOUSEX - camera.position.x) * 0.05;
-  camera.position.y += (-MOUSEY - camera.position.y) * 0.05;
+function animate() {
+  requestAnimationFrame(animate);
+  camera.position.x += (-MOUSEX - camera.position.x) * 0.05;
+  camera.position.y += (MOUSEY - camera.position.y) * 0.05;
   camera.lookAt(scene.position);
+
+  render();
+}
+function render() {
+  composer.render();
 }
 
 function drawParticles() {
   // create the particle variables
-  var particleCount = 1800,
+  var particleCount = 800,
       particles = new THREE.Geometry(),
       pMaterial = new THREE.ParticleBasicMaterial({
         color: 0xFFFFFF,
@@ -90,7 +100,7 @@ function drawParticles() {
     // position values, -250 -> 250
     var pX = Math.random() * 500 - 250,
         pY = Math.random() * 500 - 250,
-        pZ = Math.random() * 500 - 250,
+        pZ = Math.random() * -500 + 100,
         particle = new THREE.Vertex(
           new THREE.Vector3(pX, pY, pZ)
         );
@@ -106,58 +116,6 @@ function drawParticles() {
 
   // add it to the scene
   scene.add(particleSystem);
-}
-
-function initFBO() {
-  var fboMat = new THREE.MeshBasicMaterial({color:0xffffff, transparent: true, opacity: 0.5, map: fbo});
-  var fboGeo = new THREE.PlaneGeometry(WIDTH, HEIGHT);
-  fboMesh = new THREE.Mesh(fboGeo, fboMat);
-  fboMesh.position.z = -10;
-  fboMesh.position.x = -5;
-}
-
-function grid() {
-  var size = 50, step = 5;
-
-  var geometry = new THREE.Geometry();
-  var material = new THREE.LineBasicMaterial({ color: 0x333333, opacity: 1 });
-
-  for (var i = - size; i <= size; i += step) {
-
-    geometry.vertices.push(new THREE.Vector3(- size, 0, i));
-    geometry.vertices.push(new THREE.Vector3(  size, 0, i));
-
-    geometry.vertices.push(new THREE.Vector3(i, 0, - size));
-    geometry.vertices.push(new THREE.Vector3(i, 0,   size));
-
-  }
-
-  var line = new THREE.Line(geometry, material, THREE.LinePieces);
-  scene.add(line);
-}
-
-function draw_lines() {
-  var linegeo = new THREE.Geometry();
-  var linemat = new THREE.LineBasicMaterial({ color: 0xffffff, opacity: 1 });
-  linegeo.vertices.push(new THREE.Vector3(0, 30, -100));
-  linegeo.vertices.push(new THREE.Vector3(4, 0, 0));
-  var line = new THREE.Line(linegeo, linemat, THREE.LinePieces);
-  scene.add(line);
-
-  var linegeo2 = new THREE.Geometry();
-  linegeo2.vertices.push(new THREE.Vector3(0, 30, -100));
-  linegeo2.vertices.push(new THREE.Vector3(-4, 0, 0));
-  var line2 = new THREE.Line(linegeo2, linemat, THREE.LinePieces);
-  scene.add(line2);
-}
-
-function draw_line(start_position, end_position) {
-  var linegeo = new THREE.Geometry();
-  var linemat = new THREE.LineBasicMaterial({ color: 0xffffff, opacity: 1 });
-  linegeo.vertices.push(start_position);
-  linegeo.vertices.push(end_position);
-  var line = new THREE.Line(linegeo, linemat, THREE.LinePieces);
-  scene.add(line);
 }
 
 function draw_text(text) {
@@ -191,28 +149,10 @@ function draw_text(text) {
 
   text.rotation.x = -20 * Math.PI / 180;
 
-  scene.add(text);
-  //draw_geometry_lines(text);
-
-  // Outline
-
-  var outlineMaterial1 = new THREE.MeshBasicMaterial({ color: 0xff0000});
-  var outlineMesh1 = new THREE.Mesh(textGeom, outlineMaterial1);
-  
-  outlineMesh1.scale.multiplyScalar(1.05);
-  // scene.add(outlineMesh1);
+  return text;
 }
 
-function draw_geometry_lines(mesh) {
-  var geo = mesh.geometry;
-  var vertices = geo.vertices;
-  var start = new THREE.Vector3(0, 30, -100);
-  for (var i = 0;i < vertices.length; i += 25) {
-    var vertex = vertices[i];
-    var end = new THREE.Vector3(vertex.x, vertex.y, vertex.z);
-    draw_line(start, end);
-  }
-}
+
 
 function onDocumentMouseMove(event) {
   MOUSEX = (event.clientX - WINDOWHALFX) / 200;
