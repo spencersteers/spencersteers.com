@@ -1,4 +1,3 @@
-
 var WIDTH = window.innerWidth, HEIGHT = window.innerHeight;
 var VIEW_ANGLE = 45, ASPECT = WIDTH / HEIGHT, NEAR = 0.1, FAR = 10000;
 var MOUSEX = 0;
@@ -36,26 +35,34 @@ GrayscaleRampShader = {
 		uniform float opacity;
 		uniform sampler2D tDiffuse;
 		varying vec2 vUv;
+		
+		// the 'v' in hsv
+		float rgbMax(vec3 rgb) {
+			return rgb.r > rgb.g ? (rgb.r > rgb.b ? rgb.r : rgb.b) : (rgb.g > rgb.b ? rgb.g : rgb.b);
+		}
 
 		void main() {
 			vec3 c1 = vec3(255, 235, 235);
 			vec3 c2 = vec3(244, 220, 217);
 			vec3 c3 = vec3(198, 191, 210);
 			vec3 c4 = vec3(114, 108, 145);
-			// vec3 c5 = vec3(63, 52, 70);
-			vec3 c5 = vec3(0, 0, 0);
-			vec4 texel = texture2D( tDiffuse, vUv );
-			
+			vec3 c5 = vec3(63, 52, 70);
+			vec3 c6 = vec3(0, 0, 0);			
 			vec3 use = vec3(0.0, 0.0, 0.0);
-			float c = (texel.r + texel.g + texel.b) / 3.0;
-			if (c < 0.25) { use = c5; }
-			else if (c < 0.4) { use = c4; }
-			else if (c < 0.6) { use = c3; }
-			else if (c < 0.8) { use = c2; }
+			
+			vec4 texel = texture2D( tDiffuse, vUv );
+			float c = rgbMax(texel.rgb);
+
+			if (c < 0.25) { use = c6; }
+			else if (c < 0.40) { use = c5; }
+			else if (c < 0.55) { use = c4; }
+			else if (c < 0.70) { use = c3; }
+			else if (c < 0.85) { use = c2; }
 			else if (c < 1.0) { use = c1; }
 			texel.r = use.r / 256.0;
 			texel.g = use.g / 256.0;
 			texel.b = use.b / 256.0;
+			
 			gl_FragColor = opacity * texel;
 		}
 	`
@@ -93,16 +100,13 @@ function init() {
   fadeMaterial = new THREE.MeshBasicMaterial({
       color: 0x000000,
       transparent: true,
-      opacity: 0.02
+      opacity: 0.01
   });
   var fadePlane = new THREE.PlaneGeometry(10, 10);
   fadeMesh = new THREE.Mesh(fadePlane, fadeMaterial);
-  
   // place plane in front of camera
   camera.add(fadeMesh);
   fadeMesh.position.z = -0.5;  
-  
-  
   
 
   // draw text
@@ -131,9 +135,9 @@ function init() {
   composer = new THREE.EffectComposer(renderer, renderTarget);
   composer.addPass(new THREE.RenderPass(scene, camera));
 
-  var copyShader = new THREE.ShaderPass(GrayscaleRampShader);
-  copyShader.renderToScreen = true;
-  composer.addPass(copyShader);
+  var grayscaleRampShader = new THREE.ShaderPass(GrayscaleRampShader);
+  grayscaleRampShader.renderToScreen = true;
+  composer.addPass(grayscaleRampShader);
 }
 
 
@@ -199,7 +203,7 @@ function draw_text(text) {
 
   materialArray = [
     new THREE.MeshBasicMaterial({ color: 0xFFFFFF, transparent: true, opacity: 1  }),
-    new THREE.MeshBasicMaterial({ color: 0x444444, shading: THREE.SmoothShading })
+    new THREE.MeshBasicMaterial({ color: 0x777777, shading: THREE.SmoothShading })
   ];
 
   whiteWireframe =  new THREE.MeshBasicMaterial({ color: 0xFFFFFF, transparent: true, opacity: 0.0 });
