@@ -64,7 +64,6 @@ GrayscaleRampShader = {
 if (Detector.webgl) {
   init();
   animate();
-  startMouseStoppedTimer();
 }
 else {
   document.getElementById('nowebgl').style.display = 'block';
@@ -94,7 +93,7 @@ function init() {
   fadeMaterial = new THREE.MeshBasicMaterial({
       color: 0x000000,
       transparent: true,
-      opacity: 0.01
+      opacity: 0.02
   });
   var fadePlane = new THREE.PlaneGeometry(10, 10);
   fadeMesh = new THREE.Mesh(fadePlane, fadeMaterial);
@@ -154,12 +153,12 @@ function render() {
 
 function drawParticles() {
   // create the particle variables
-  var particleCount = 800,
-      particles = new THREE.Geometry(),
-      pMaterial = new THREE.ParticleBasicMaterial({
-        color: 0xFFFFFF,
-        size: 1
-      });
+  var particleCount = 800;
+  var particles = new THREE.Geometry();
+  var pMaterial = new THREE.ParticleBasicMaterial({
+  	color: 0xFFFFFF,
+  	size: 1.5
+  });
 
   // now create the individual particles
   for (var p = 0; p < particleCount; p++) {
@@ -217,26 +216,9 @@ function draw_text(text) {
   return textMesh;
 }
 
-var mouseStoppedTimer;
-function startMouseStoppedTimer() {
-  clearTimeout(mouseStoppedTimer);
-  mouseStoppedTimer = setTimeout(onMouseStopped, 2000);
-}
-
-function onMouseStopped() {
-  // composer.reset();
-}
-
 function onDocumentMouseMove(event) {
-  // 
-  // fadeMaterial.opacity = 0.05;
-  
-  
   MOUSEX = (event.clientX - WINDOWHALFX) / 200;
   MOUSEY = (event.clientY - WINDOWHALFY) / 200;
-  
-  // reset mouse stopped timer
-  startMouseStoppedTimer();
 }
 
 function onWindowResize() {
@@ -253,5 +235,24 @@ function onWindowResize() {
 }
 
 
-
+window.ondevicemotion = function(event) {
+	MOUSEX += (event.rotationRate.beta) / 2000;
+  MOUSEY += (event.rotationRate.alpha) / 2000;
+	
+	var maxX = WINDOWHALFX / 100;
+	if (MOUSEX > maxX) {
+		MOUSEX = maxX;
+	}
+	else if (MOUSEX < -maxX) {
+		MOUSEX = -maxX;
+	}
+	
+	var maxY = WINDOWHALFY / 100;
+	if (MOUSEY > maxY) {
+		MOUSEY = maxY;
+	}
+	else if (MOUSEY < -maxY) {
+		MOUSEY = -maxY;
+	}
+}
 
