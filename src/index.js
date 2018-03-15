@@ -74,9 +74,6 @@ else {
   document.getElementById('nowebgl').style.display = 'block';
 }
 
-window.addEventListener('resize', onWindowResize, false);
-document.addEventListener('mousemove', onDocumentMouseMove, false);
-
 function init() {
   renderer = new THREE.WebGLRenderer();
   renderer.autoClearColor = false;
@@ -211,26 +208,49 @@ function draw_text(text) {
   return textMesh;
 }
 
+// event listeners
+function debounce(func, wait, immediate) {
+	var timeout;
+	return function() {
+		var context = this, args = arguments;
+		var later = function() {
+			timeout = null;
+			if (!immediate) func.apply(context, args);
+		};
+		var callNow = immediate && !timeout;
+		clearTimeout(timeout);
+		timeout = setTimeout(later, wait);
+		if (callNow) func.apply(context, args);
+	};
+};
+
 function onDocumentMouseMove(event) {
   MOUSEX = (event.clientX - WINDOWHALFX) / 200;
   MOUSEY = (event.clientY - WINDOWHALFY) / 200;
 }
 
+var documentBodyWidth = document.body.clientWidth;
+var documentBodyHeight = document.body.clientHeight;
 function onWindowResize() {
+	if (documentBodyWidth === document.body.clientWidth && documentBodyHeight === document.body.clientHeight) {
+		return;
+	}
+	
+	documentBodyWidth = document.body.clientWidth;
+	documentBodyHeight = document.body.clientHeight;
+	
+  WINDOWHALFX = documentBodyWidth / 2;
+  WINDOWHALFY = documentBodyHeight / 2;
 
-  WINDOWHALFX = window.innerWidth / 2;
-  WINDOWHALFY = window.innerHeight / 2;
-
-  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.aspect = documentBodyWidth / documentBodyHeight;
   camera.updateProjectionMatrix();
 
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  renderTarget.setSize(window.innerWidth * devicePixelRatio, window.innerHeight * devicePixelRatio);
+  renderer.setSize(documentBodyWidth, documentBodyHeight);
+  renderTarget.setSize(documentBodyWidth * devicePixelRatio, documentBodyHeight * devicePixelRatio);
   composer.reset();
 }
 
-
-window.ondevicemotion = function(event) {
+function onDeviceMotion(event) {
 	MOUSEX += (event.rotationRate.beta) / 2000;
   MOUSEY += (event.rotationRate.alpha) / 2000;
 	
@@ -250,3 +270,7 @@ window.ondevicemotion = function(event) {
 		MOUSEY = -maxY;
 	}
 }
+
+window.addEventListener('resize', debounce(onWindowResize, 300, false), false);
+window.addEventListener('devicemotion', onDeviceMotion, false);
+document.addEventListener('mousemove', onDocumentMouseMove, false);
