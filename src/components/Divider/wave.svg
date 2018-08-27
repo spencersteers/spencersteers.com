@@ -1,0 +1,22 @@
+<!-- stroke="#9da4b4" -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 10">
+  <style type="text/css">
+    .wave {
+      animation: waveHorizontal 1s linear infinite;
+    }
+    @keyframes waveHorizontal {
+      from {
+        transform: translateX(0);
+      }
+      to {
+        transform: translateX(-30px);
+      }
+    }
+  </style>
+  <path
+    class="wave"
+    stroke="#3d464f"
+    stroke-width="2"
+    fill="none"
+    d="M0,7.5 c7.684299348848887,0 7.315700651151113,-5 15, -5 s7.315700651151113,5 15,5c7.684299348848887,0 7.315700651151113,-5 15, -5 s7.315700651151113,5 15,5"/>
+</svg>
