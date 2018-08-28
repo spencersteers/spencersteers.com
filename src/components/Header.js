@@ -14,7 +14,7 @@ const headerStyles = {
 
 const Header = () => {
   return (
-    <header style={{ ...headerStyles, ...{ height: 540, paddingTop: 20 } }}>
+    <header style={{ ...headerStyles, ...{ height: 540, paddingTop: rhythm(1), textAlign: 'center' } }}>
       {/* <Layout> */}
         <ArcadeScreen />
       {/* </Layout> */}
