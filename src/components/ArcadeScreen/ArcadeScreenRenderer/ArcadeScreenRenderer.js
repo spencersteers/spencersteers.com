@@ -172,14 +172,14 @@ export default class ArcadeScreenRenderer {
     // this.camera.add(this.titleTextGroup);
     // this.titleTextGroup.position.z = -10;
     // this.titleTextGroup.position.y = 2.0;
-
-    console.time('old');
-    this.createText('ABCABC', this.font, 0.275, 0.3);
-    console.timeEnd('old');
-
-    console.time('new');
-    textBuilder.build("ABC");
-    console.timeEnd('new');
+    //
+    // console.time('old');
+    // this.createText('ABCABC', this.font, 0.275, 0.3);
+    // console.timeEnd('old');
+    //
+    // console.time('new');
+    // textBuilder.build("ABC");
+    // console.timeEnd('new');
 
     console.time('createText');
     // this.mottoText = this.createText('- YOUNG PROFESSIONAL -', this.font, 0.275, 0.3);
