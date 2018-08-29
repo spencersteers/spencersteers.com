@@ -9,6 +9,7 @@
   "dependencies": {
     "@tweenjs/tween.js": "^17.2.0",
     "gatsby": "next",
+    "gatsby-image": "^2.0.0-rc.0",
     "gatsby-plugin-feed": "next",
     "gatsby-plugin-manifest": "next",
     "gatsby-plugin-offline": "next",

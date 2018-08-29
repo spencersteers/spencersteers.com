@@ -9,13 +9,10 @@ import { RadialDistortionShader } from './shaders/RadialDistortionShader';
 import { StaticShader } from './shaders/StaticShader';
 import { AlphaRampShader } from './shaders/AlphaRampShader';
 import { getRandomRange, convertRange } from './utils';
-
-
 import TextBuilder from './TextBuilder';
 
-
 export default class ArcadeScreenRenderer {
-  constructor(container, aspectRatio) {
+  constructor(aspectRatio) {
     this.font = new THREE.Font(HelvetikerRegularFont);
 
     window.textBuilder = new TextBuilder({
@@ -28,7 +25,6 @@ export default class ArcadeScreenRenderer {
       ]
     });
 
-    this.container = container;
     this.aspectRatio = aspectRatio;
 
     this.clock = new THREE.Clock();
@@ -103,8 +99,6 @@ export default class ArcadeScreenRenderer {
     });
     this.renderer.setPixelRatio(window.devicePixelRatio);
 
-    this.container.append(this.renderer.domElement);
-
     this.scene = new THREE.Scene();
     window._scene = this.scene;
 
@@ -113,10 +107,8 @@ export default class ArcadeScreenRenderer {
     this.camera.position.z = 10;
     this.scene.add(this.camera);
 
-    console.time('p');
     let particles = this.createParticles();
     this.scene.add(particles);
-    console.timeEnd('p');
 
     // Post-processing
     this.composer = new EffectComposer(this.renderer);
@@ -163,105 +155,25 @@ export default class ArcadeScreenRenderer {
     });
     this.composer.addPass(radialDistortionPass);
 
-
     var copyPass = new ShaderPass(CopyShader);
     copyPass.renderToScreen = true;
     this.composer.addPass(copyPass);
 
-    // this.titleTextGroup = this.createTitleTextGroup(this.font);
-    // this.camera.add(this.titleTextGroup);
-    // this.titleTextGroup.position.z = -10;
-    // this.titleTextGroup.position.y = 2.0;
-    //
-    // console.time('old');
-    // this.createText('ABCABC', this.font, 0.275, 0.3);
-    // console.timeEnd('old');
-    //
-    // console.time('new');
-    // textBuilder.build("ABC");
-    // console.timeEnd('new');
+    let mottoTextGroup = window.textBuilder.build("- YOUNG PROFESSIONAL -");
+    mottoTextGroup.position.z = -10;
+    mottoTextGroup.position.y = -2.25;
+    mottoTextGroup.position.x = 0;
+    mottoTextGroup.scale.x = .392857143;
+    mottoTextGroup.scale.y = .392857143;
+    mottoTextGroup.scale.z = .392857143;
+    this.camera.add(mottoTextGroup);
 
-    console.time('createText');
-    // this.mottoText = this.createText('- YOUNG PROFESSIONAL -', this.font, 0.275, 0.3);
-    console.timeEnd('createText');
-    this.mottoTextGroup = new THREE.Object3D();
-    this.mottoTextGroup.add(this.mottoText);
-    this.camera.add(this.mottoTextGroup);
-    this.mottoTextGroup.position.z = -10;
-    this.mottoTextGroup.position.y = -2.25;
-
-    console.time("textBuilder:g1")
-    var g1 = window.textBuilder.build("- YOUNG PROFESSIONAL -");
-    // g1.rotation.x = (-40 * Math.PI) / 180;
-    console.timeEnd("textBuilder:g1")
-
-    // console.time("textBuilder:g2")
-    var g2 = window.textBuilder.build("SPENCER\nSTEERS");
-    g2.rotation.x = (-20 * Math.PI) / 180;
-    // console.timeEnd("textBuilder:g2")
-
-
-
-    g1.position.z = -10;
-    g1.position.y = -2.25;
-    g1.position.x = 0;
-    g1.scale.x = .392857143;
-    g1.scale.y = .392857143;
-    g1.scale.z = .392857143;
-
-    var geometry = new THREE.BoxGeometry( 1, 1, 1 );
-    var material = new THREE.MeshBasicMaterial( {color: 0x00ff00} );
-    var cube = new THREE.Mesh( geometry, material );
-    cube.position.z = -10;
-    // this.camera.add(cube);
-
-    // g2.rotation.x = (-20 * Math.PI) / 180;
-    g2.position.z = -10;
-    g2.position.y = 2.0;
-    g2.position.x = 0;
-
-    console.log(g2.position)
-
-    this.camera.add(g1);
-    // console.log('g2', g2);
-    this.camera.add(g2);
-
-
-    // console.log(this.font.generateShapes("0")[0]);
-
-    // stagger text load
-    // setTimeout(() => {
-    //   this.titleTextGroup = this.createTitleTextGroup(this.font);
-    //   this.camera.add(this.titleTextGroup);
-    //   this.titleTextGroup.position.z = -10;
-    //   this.titleTextGroup.position.y = 1.5;
-    // });
-    //
-    // setTimeout(() => {
-    //   this.mottoText = this.createText('- YOUNG PROFESSIONAL -', this.font, 0.2);
-    //   this.mottoTextGroup = new THREE.Object3D();
-    //   this.mottoTextGroup.add(this.mottoText);
-    //   this.camera.add(this.mottoTextGroup);
-    //   this.mottoTextGroup.position.z = -10;
-    //   this.mottoTextGroup.position.y = -2;
-    // }, 1);
-
-    this.fadeTweenParams = {
-      maxOpacity: 1.0,
-      minOpacity: 0.4,
-      currentOpacity: 1.0,
-      duration: 2000,
-    };
-    this.fadeTween = new TWEEN.Tween(this.fadeTweenParams)
-      .to({ currentOpacity: this.fadeTweenParams.minOpacity }, this.fadeTweenParams.duration)
-      .repeat(Infinity)
-      .yoyo(true)
-      .easing(TWEEN.Easing.Quadratic.InOut)
-      .onUpdate(() => {
-        for (let i = 0; i < this.mottoText.material.length; ++i)
-          this.mottoText.material[i].opacity = this.fadeTweenParams.currentOpacity;
-      })
-      .start();
+    let titleTextGroup = window.textBuilder.build("SPENCER\nSTEERS");
+    titleTextGroup.rotation.x = (-20 * Math.PI) / 180;
+    titleTextGroup.position.z = -10;
+    titleTextGroup.position.y = 2.0;
+    titleTextGroup.position.x = 0;
+    this.camera.add(titleTextGroup);
   }
 
   createCamera(viewAngle = 45, aspectRatio = 3 / 4, nearClip = 0.1, farClip = 10000) {

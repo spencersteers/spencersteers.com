@@ -4,11 +4,13 @@ import { clamp, getRandomRange, convertRange } from './utils';
 
 export default class ArcadeScreenController {
   constructor({ rootElement, aspectRatio, width, height }) {
-    console.time('time');
-    this.arcadeScreenRenderer = new ArcadeScreenRenderer(rootElement, aspectRatio);
-    console.timeEnd('time');
+    console.time('new ArcadeScreenRenderer()');
+    this.arcadeScreenRenderer = new ArcadeScreenRenderer(aspectRatio);
+    console.timeEnd('new ArcadeScreenRenderer()');
+
     this.rootElement = rootElement;
     this.canvasElement = this.arcadeScreenRenderer.getCanvasElement();
+    this.rootElement.append(this.canvasElement);
 
     // range between -1 and 1
     this.normalizedMouseX = 0;
