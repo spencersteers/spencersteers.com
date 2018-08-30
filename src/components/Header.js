@@ -38,7 +38,7 @@ export default props => {
   return <StaticQuery
     query={graphql`
       query {
-        arcadeCabinet: file(relativePath: { eq: "ArcadeCabinet.png" }) {
+        arcadeCabinet: file(relativePath: { eq: "ArcadeCabinet_RoundedRough.png" }) {
           childImageSharp {
             fluid(maxWidth: 300) {
               base64

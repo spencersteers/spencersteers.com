@@ -11,6 +11,7 @@ export default class ArcadeScreenController {
     this.rootElement = rootElement;
     this.canvasElement = this.arcadeScreenRenderer.getCanvasElement();
     this.rootElement.append(this.canvasElement);
+    this.rootElement.classList.add('fade-in');
 
     // range between -1 and 1
     this.normalizedMouseX = 0;

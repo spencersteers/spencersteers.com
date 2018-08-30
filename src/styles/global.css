@@ -25,6 +25,15 @@ a svg {
 }
 
 
+#arcade-screen-container {
+  transition: opacity 0.35s ease;
+  opacity: 0;
+}
+
+#arcade-screen-container.fade-in {
+  opacity: 1;
+}
+
 #arcade-screen-container canvas {
   transform: translateZ(1px);
 }
