@@ -27,7 +27,7 @@ class ArcadeScreen extends React.Component {
         height: height,
         aspectRatio: aspectRatio,
       });
-    }, 1000);
+    });
   }
 
   componentWillUnmount() {

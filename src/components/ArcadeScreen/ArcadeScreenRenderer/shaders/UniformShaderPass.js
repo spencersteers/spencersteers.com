@@ -1,22 +1,23 @@
 import { ShaderPass } from 'three-full';
 
-let TemporalShaderPass = function(shader, timeUniformName = 'time') {
+let UniformShaderPass = function(shader, timeUniformName = 'time') {
   ShaderPass.call(this, shader);
   this.timeUniformName = timeUniformName;
+  this.shouldUpdateTimeUniform = this.uniforms.hasOwnProperty(this.timeUniformName);
   this.elapsedTime = 0;
 };
 
-TemporalShaderPass.prototype = Object.create(ShaderPass.prototype);
-TemporalShaderPass.prototype.constructor = TemporalShaderPass;
+UniformShaderPass.prototype = Object.create(ShaderPass.prototype);
+UniformShaderPass.prototype.constructor = UniformShaderPass;
 
-TemporalShaderPass.prototype.setUniforms = function(uniforms) {
+UniformShaderPass.prototype.setUniforms = function(uniforms) {
   let self = this;
   Object.keys(uniforms).forEach(key => {
     self.uniforms[key].value = uniforms[key];
   });
 };
 
-TemporalShaderPass.prototype.render = function(
+UniformShaderPass.prototype.render = function(
   renderer,
   writeBuffer,
   readBuffer,
@@ -24,10 +25,10 @@ TemporalShaderPass.prototype.render = function(
   maskActive
 ) {
   this.elapsedTime += delta;
-  if (this.uniforms.hasOwnProperty(this.timeUniformName))
+  if (this.shouldUpdateTimeUniform)
     this.uniforms[this.timeUniformName].value = this.elapsedTime;
 
   ShaderPass.prototype.render.call(this, renderer, writeBuffer, readBuffer, delta, maskActive);
 };
 
-export { TemporalShaderPass };
+export { UniformShaderPass };

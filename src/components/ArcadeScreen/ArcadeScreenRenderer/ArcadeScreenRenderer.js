@@ -3,7 +3,7 @@ import { EffectComposer, RenderPass, ShaderPass, CopyShader, FilmShader, Vignett
 import HelvetikerRegularFont from 'three-full/sources/fonts/helvetiker_regular.typeface.json';
 import TWEEN from '@tweenjs/tween.js';
 
-import { TemporalShaderPass } from './shaders/TemporalShaderPass';
+import { UniformShaderPass } from './shaders/UniformShaderPass';
 import { AfterimagePass } from './shaders/AfterimagePass';
 import { RadialDistortionShader } from './shaders/RadialDistortionShader';
 import { StaticShader } from './shaders/StaticShader';
@@ -13,10 +13,8 @@ import TextBuilder from './TextBuilder';
 
 export default class ArcadeScreenRenderer {
   constructor(aspectRatio) {
-    this.font = new THREE.Font(HelvetikerRegularFont);
-
-    window.textBuilder = new TextBuilder({
-      font: this.font,
+    this.textBuilder = new TextBuilder({
+      font: new THREE.Font(HelvetikerRegularFont),
       size:  0.7,
       height: 0.4,
       material: [
@@ -93,14 +91,15 @@ export default class ArcadeScreenRenderer {
 
   // setup / object builders
   setupScene() {
+    console.time('new THREE.WebGLRenderer');
     this.renderer = new THREE.WebGLRenderer({
       preserveDrawingBuffer: false,
       alpha: true,
     });
     this.renderer.setPixelRatio(window.devicePixelRatio);
+    console.timeEnd('new THREE.WebGLRenderer');
 
     this.scene = new THREE.Scene();
-    window._scene = this.scene;
 
     this.camera = this.createCamera();
     this.camera.aspectRatio = this.aspectRatio;
@@ -111,6 +110,7 @@ export default class ArcadeScreenRenderer {
     this.scene.add(particles);
 
     // Post-processing
+    console.time('pp');
     this.composer = new EffectComposer(this.renderer);
 
     let renderPass = new RenderPass(this.scene, this.camera);
@@ -122,7 +122,7 @@ export default class ArcadeScreenRenderer {
     var alphaRampShader = new ShaderPass(AlphaRampShader);
     this.composer.addPass(alphaRampShader);
 
-    this.filmPass = new TemporalShaderPass(FilmShader);
+    this.filmPass = new UniformShaderPass(FilmShader);
     this.filmPass.setUniforms({
       grayscale: 0,
       sCount: 600,
@@ -131,14 +131,14 @@ export default class ArcadeScreenRenderer {
     });
     this.composer.addPass(this.filmPass);
 
-    this.staticPass = new TemporalShaderPass(StaticShader);
+    this.staticPass = new UniformShaderPass(StaticShader);
     this.staticPass.setUniforms({
       amount: 0.08,
       size: 2,
     });
     this.composer.addPass(this.staticPass);
 
-    let vignettePass = new TemporalShaderPass(VignetteShader);
+    let vignettePass = new UniformShaderPass(VignetteShader);
     vignettePass.setUniforms({
       offset: 0.3,
       darkness: 3
@@ -146,7 +146,7 @@ export default class ArcadeScreenRenderer {
     this.composer.addPass(vignettePass);
 
     let distortionHorizontalFOV = 65;
-    let radialDistortionPass = new TemporalShaderPass(RadialDistortionShader);
+    let radialDistortionPass = new UniformShaderPass(RadialDistortionShader);
     radialDistortionPass.setUniforms({
       strength: 0.3,
       height: Math.tan(THREE._Math.degToRad(distortionHorizontalFOV) / 2) / this.camera.aspect,
@@ -158,8 +158,11 @@ export default class ArcadeScreenRenderer {
     var copyPass = new ShaderPass(CopyShader);
     copyPass.renderToScreen = true;
     this.composer.addPass(copyPass);
+    console.timeEnd('pp');
 
-    let mottoTextGroup = window.textBuilder.build("- YOUNG PROFESSIONAL -");
+
+    console.time('text1');
+    let mottoTextGroup = this.textBuilder.build("- YOUNG PROFESSIONAL -");
     mottoTextGroup.position.z = -10;
     mottoTextGroup.position.y = -2.25;
     mottoTextGroup.position.x = 0;
@@ -167,13 +170,16 @@ export default class ArcadeScreenRenderer {
     mottoTextGroup.scale.y = .392857143;
     mottoTextGroup.scale.z = .392857143;
     this.camera.add(mottoTextGroup);
+    console.timeEnd('text1');
 
-    let titleTextGroup = window.textBuilder.build("SPENCER\nSTEERS");
+    console.time('text2');
+    let titleTextGroup = this.textBuilder.build("SPENCER\nSTEERS");
     titleTextGroup.rotation.x = (-20 * Math.PI) / 180;
     titleTextGroup.position.z = -10;
     titleTextGroup.position.y = 2.0;
     titleTextGroup.position.x = 0;
     this.camera.add(titleTextGroup);
+    console.timeEnd('text2');
   }
 
   createCamera(viewAngle = 45, aspectRatio = 3 / 4, nearClip = 0.1, farClip = 10000) {

@@ -76,17 +76,3 @@ export default props => {
     render={data => <Header data={data} {...props} />}
   />
 };
-
-export const CompactHeader = () => {
-  let styles = { ...headerStyles, height: 200 };
-
-  return (
-    <header style={styles}>
-      <Layout>
-        <Link to="/" rel="home">
-          Home
-        </Link>
-      </Layout>
-    </header>
-  );
-};

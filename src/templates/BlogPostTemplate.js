@@ -8,7 +8,7 @@ import { rhythm, scale } from '../utils/typography';
 import Page from '../components/Page';
 import Layout from '../components/Layout';
 import BlogPost from '../components/BlogPost';
-import { CompactHeader } from '../components/Header';
+import Header from '../components/Header';
 
 class BlogPostTemplate extends React.Component {
   render() {
@@ -22,7 +22,7 @@ class BlogPostTemplate extends React.Component {
         description={post.excerpt}
         url={`${siteUrl}${post.fields.slug}`}
       >
-        <CompactHeader />
+        <Header />
         <Layout location={this.props.location}>
           <BlogPost post={post} />
           <ul

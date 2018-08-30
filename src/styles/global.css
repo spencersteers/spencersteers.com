@@ -24,9 +24,8 @@ a svg {
   fill: hsla(0, 0%, 100%, 0.9);
 }
 
-
 #arcade-screen-container {
-  transition: opacity 0.35s ease;
+  transition: opacity 0.25s ease;
   opacity: 0;
 }
 
