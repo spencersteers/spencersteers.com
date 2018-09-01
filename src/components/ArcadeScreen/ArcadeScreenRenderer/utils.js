@@ -9,7 +9,32 @@ export function getRandomRange(min, max) {
 export function convertRange(value, oldMin, oldMax, newMin, newMax) {
   return ((value - oldMin) * (newMax - newMin)) / (oldMax - oldMin) + newMin;
 }
-function lineStart(numLines, lineHeight) {
-  var totalHeight = (numLines - 1) * lineHeight;
-  return totalHeight - totalHeight / 2
+
+export function waitUntilReady(func) {
+  let _isReady = false;
+  let waitArgs;
+  let waitThis;
+
+  const waiting = function(...args) {
+    waitArgs = args;
+    waitThis = this
+
+    if (_isReady) {
+      func.apply(waitThis, waitArgs);
+    }
+  }
+
+  function ready() {
+    _isReady = true;
+    if (waitArgs && waitThis)
+      func.apply(waitThis, waitArgs);
+  }
+
+  function isReady() {
+    return _isReady;
+  }
+
+  waiting.ready = ready
+  waiting.isReady = isReady
+  return waiting
 }

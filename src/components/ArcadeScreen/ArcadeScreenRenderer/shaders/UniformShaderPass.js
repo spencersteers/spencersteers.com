@@ -25,8 +25,7 @@ UniformShaderPass.prototype.render = function(
   maskActive
 ) {
   this.elapsedTime += delta;
-  if (this.shouldUpdateTimeUniform)
-    this.uniforms[this.timeUniformName].value = this.elapsedTime;
+  if (this.shouldUpdateTimeUniform) this.uniforms[this.timeUniformName].value = this.elapsedTime;
 
   ShaderPass.prototype.render.call(this, renderer, writeBuffer, readBuffer, delta, maskActive);
 };

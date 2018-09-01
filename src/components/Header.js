@@ -19,60 +19,51 @@ const Header = props => {
   let images = {
     arcadeCabinet: get(props, 'data.arcadeCabinet.childImageSharp.fluid'),
     buttonLeftUp: get(props, 'data.buttonLeftUp.childImageSharp.fixed'),
-    buttonRightUp: get(props, 'data.buttonRightUp.childImageSharp.fixed')
+    buttonRightUp: get(props, 'data.buttonRightUp.childImageSharp.fixed'),
+    buttonSpriteSheet: get(props, 'data.buttonSpriteSheet.childImageSharp.fixed'),
   };
   images.arcadeCabinet['width'] = 300;
   images.arcadeCabinet['height'] = 300 / images.arcadeCabinet.aspectRatio;
   return (
-    <header style={{ ...headerStyles, ...{ height: 540, paddingTop: rhythm(1), textAlign: 'center' } }}>
-        <ArcadeScreen
-          arcadeCabinet={images.arcadeCabinet}
-          buttonLeftUp={images.buttonLeftUp}
-          buttonRightUp={images.buttonRightUp}
-        />
+    <header
+      style={{ ...headerStyles, ...{ height: 540, paddingTop: rhythm(1), textAlign: 'center' } }}
+    >
+      <ArcadeScreen
+        arcadeCabinet={images.arcadeCabinet}
+        buttonSpriteSheetSrc={images.buttonSpriteSheet.src}
+        buttonWidth={38}
+        buttonHeight={23}
+      />
     </header>
   );
 };
 
 export default props => {
-  return <StaticQuery
-    query={graphql`
-      query {
-        arcadeCabinet: file(relativePath: { eq: "ArcadeCabinet_RoundedRough.png" }) {
-          childImageSharp {
-            fluid(maxWidth: 300) {
-              base64
-              aspectRatio
-              src
-              srcSet
-              sizes
+  return (
+    <StaticQuery
+      query={graphql`
+        query {
+          arcadeCabinet: file(relativePath: { eq: "ArcadeCabinet_RoundedRoughSmall.png" }) {
+            childImageSharp {
+              fluid(maxWidth: 300) {
+                base64
+                aspectRatio
+                src
+                srcSet
+                sizes
+              }
             }
           }
-        },
-        buttonLeftUp: file(relativePath: { eq: "ArcadeButtUp_Left.png" }) {
-          childImageSharp {
-            fixed(width: 38) {
-              base64
-              aspectRatio
-              src
-              width
-              height
-            }
-          }
-        },
-        buttonRightUp: file(relativePath: { eq: "ArcadeButtUp_Right.png" }) {
-          childImageSharp {
-            fixed(width: 38) {
-              base64
-              aspectRatio
-              src
-              width
-              height
+          buttonSpriteSheet: file(relativePath: { eq: "ArcadeButton_SpriteSheet.png" }) {
+            childImageSharp {
+              fixed(height: 69, width: 456) {
+                src
+              }
             }
           }
         }
-      }
-    `}
-    render={data => <Header data={data} {...props} />}
-  />
+      `}
+      render={data => <Header data={data} {...props} />}
+    />
+  );
 };

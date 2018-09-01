@@ -24,12 +24,12 @@ a svg {
   fill: hsla(0, 0%, 100%, 0.9);
 }
 
-#arcade-screen-container {
-  transition: opacity 0.25s ease;
+.fade {
   opacity: 0;
+  transition: opacity 0.25s ease;
 }
 
-#arcade-screen-container.fade-in {
+.fade.show {
   opacity: 1;
 }
 
@@ -40,4 +40,27 @@ a svg {
 .arcade-mask-outer-wrapper {
   height: 0;
   overflow: visible;
+}
+
+.arcade-button {
+  border: none;
+  padding: 0;
+  margin: 0;
+  outline: 0;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-color: transparent;
+  cursor: pointer;
+}
+.arcade-button.left {
+  background-position-x: 0px;
+}
+.arcade-button.left:active {
+  background-position-x: -38px;
+}
+.arcade-button.right {
+  background-position-x: -76px;
+}
+.arcade-button.right:active {
+  background-position-x: -114px;
 }

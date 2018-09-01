@@ -1,5 +1,12 @@
 import * as THREE from 'three-full';
-import { EffectComposer, RenderPass, ShaderPass, CopyShader, FilmShader, VignetteShader } from 'three-full';
+import {
+  EffectComposer,
+  RenderPass,
+  ShaderPass,
+  CopyShader,
+  FilmShader,
+  VignetteShader,
+} from 'three-full';
 import HelvetikerRegularFont from 'three-full/sources/fonts/helvetiker_regular.typeface.json';
 import TWEEN from '@tweenjs/tween.js';
 
@@ -13,21 +20,22 @@ import TextBuilder from './TextBuilder';
 
 export default class ArcadeScreenRenderer {
   constructor(aspectRatio) {
+    console.group('ArcadeScreenRenderer:constructor');
+    console.time('constructor');
+
     this.textBuilder = new TextBuilder({
       font: new THREE.Font(HelvetikerRegularFont),
-      size:  0.7,
+      size: 0.7,
       height: 0.4,
       material: [
         new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true }),
-        new THREE.MeshBasicMaterial({ color: 0x777777, transparent: true })
-      ]
+        new THREE.MeshBasicMaterial({ color: 0x777777, transparent: true }),
+      ],
     });
 
     this.aspectRatio = aspectRatio;
 
     this.clock = new THREE.Clock();
-
-    this._onReadyCallBack = () => {};
     this.cameraRotationSpeed = 0.1; // degrees per frame
 
     // THREE
@@ -46,18 +54,8 @@ export default class ArcadeScreenRenderer {
     this.mottoText;
 
     this.setupScene();
-  }
-
-  onReady(cb) {
-    if (cb !== undefined) this._onReadyCallBack = cb;
-
-    if (this.isReady()) {
-      this._onReadyCallBack();
-    }
-  }
-
-  isReady() {
-    return this.titleTextGroup !== null;
+    console.timeEnd('constructor');
+    console.groupEnd('ArcadeScreenRenderer:constructor');
   }
 
   render(cameraYRotation, cameraXRotation) {
@@ -82,7 +80,8 @@ export default class ArcadeScreenRenderer {
 
   setSize(width, height) {
     this.renderer.setSize(width, height);
-    this.composer.setSize(width, height);
+    let renderSize = this.renderer.getDrawingBufferSize();
+    this.composer.setSize(renderSize.width, renderSize.height);
   }
 
   getCanvasElement() {
@@ -91,12 +90,15 @@ export default class ArcadeScreenRenderer {
 
   // setup / object builders
   setupScene() {
+    console.group('ArcadeScreenRenderer:setupScene');
+
     console.time('new THREE.WebGLRenderer');
     this.renderer = new THREE.WebGLRenderer({
       preserveDrawingBuffer: false,
       alpha: true,
     });
     this.renderer.setPixelRatio(window.devicePixelRatio);
+    console.log('window.devicePixelRatio', window.devicePixelRatio);
     console.timeEnd('new THREE.WebGLRenderer');
 
     this.scene = new THREE.Scene();
@@ -141,7 +143,7 @@ export default class ArcadeScreenRenderer {
     let vignettePass = new UniformShaderPass(VignetteShader);
     vignettePass.setUniforms({
       offset: 0.3,
-      darkness: 3
+      darkness: 3,
     });
     this.composer.addPass(vignettePass);
 
@@ -160,26 +162,27 @@ export default class ArcadeScreenRenderer {
     this.composer.addPass(copyPass);
     console.timeEnd('pp');
 
-
     console.time('text1');
-    let mottoTextGroup = this.textBuilder.build("- YOUNG PROFESSIONAL -");
+    let mottoTextGroup = this.textBuilder.build('- YOUNG PROFESSIONAL -');
     mottoTextGroup.position.z = -10;
     mottoTextGroup.position.y = -2.25;
     mottoTextGroup.position.x = 0;
-    mottoTextGroup.scale.x = .392857143;
-    mottoTextGroup.scale.y = .392857143;
-    mottoTextGroup.scale.z = .392857143;
+    mottoTextGroup.scale.x = 0.392857143;
+    mottoTextGroup.scale.y = 0.392857143;
+    mottoTextGroup.scale.z = 0.392857143;
     this.camera.add(mottoTextGroup);
     console.timeEnd('text1');
 
     console.time('text2');
-    let titleTextGroup = this.textBuilder.build("SPENCER\nSTEERS");
+    let titleTextGroup = this.textBuilder.build('SPENCER\nSTEERS');
     titleTextGroup.rotation.x = (-20 * Math.PI) / 180;
     titleTextGroup.position.z = -10;
     titleTextGroup.position.y = 2.0;
     titleTextGroup.position.x = 0;
     this.camera.add(titleTextGroup);
     console.timeEnd('text2');
+
+    console.groupEnd('ArcadeScreenRenderer:setupScene');
   }
 
   createCamera(viewAngle = 45, aspectRatio = 3 / 4, nearClip = 0.1, farClip = 10000) {
@@ -194,52 +197,13 @@ export default class ArcadeScreenRenderer {
 
     let positions = [];
     for (var p = 0; p < count; p++) {
-      var pX = getRandomRange(-radius, radius);
-      var pY = getRandomRange(-radius, radius);
-      var pZ = getRandomRange(-radius, radius);
+      let pX = getRandomRange(-radius, radius);
+      let pY = getRandomRange(-radius, radius);
+      let pZ = getRandomRange(-radius, radius);
       positions.push(pX, pY, pZ);
     }
     pGeometry.addAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
 
     return new THREE.Points(pGeometry, pMaterial);
-  }
-
-  createTitleTextGroup(font) {
-    let spencerText = this.createText('SPENCER', font, 0.7, 0.4);
-    let steersText = this.createText('STEERS', font, 0.7, 0.4);
-
-    let linePadding = 0.1;
-    let spencerTextHeight =
-      spencerText.geometry.boundingBox.max.y - spencerText.geometry.boundingBox.min.y;
-    steersText.position.y = spencerText.position.y - spencerTextHeight - linePadding;
-
-    let textGroup = new THREE.Object3D();
-    textGroup.add(spencerText);
-    textGroup.add(steersText);
-    return textGroup;
-  }
-
-  createText(text, font, size, height) {
-    var textGeom = new THREE.TextGeometry(text, {
-      size: size,
-      height: height,
-      font: font,
-      material: 0,
-      extrudeMaterial: 1,
-    });
-
-    var materialArray = [
-      new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true }),
-      new THREE.MeshBasicMaterial({ color: 0x777777, transparent: true }),
-    ];
-
-    var textMesh = new THREE.Mesh(textGeom, materialArray);
-    textGeom.computeBoundingBox();
-    var textWidth = textGeom.boundingBox.max.x - textGeom.boundingBox.min.x;
-
-    textMesh.position.set(-0.5 * textWidth, 0, 0);
-    textMesh.rotation.x = (-20 * Math.PI) / 180;
-
-    return textMesh;
   }
 }

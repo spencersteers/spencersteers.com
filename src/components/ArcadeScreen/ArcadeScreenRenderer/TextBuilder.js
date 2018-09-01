@@ -1,12 +1,12 @@
 import { TextBufferGeometry, Object3D, Mesh } from 'three-full';
 
 export default class TextBuilder {
-  constructor({font, size, height, material}) {
+  constructor({ font, size, height, material }) {
     this._cache = {};
     this.params = {
       font,
       size,
-      height
+      height,
     };
 
     let resolution = this.params.font.data.resolution;
@@ -15,7 +15,8 @@ export default class TextBuilder {
     this.material = material;
 
     let data = this.params.font.data;
-    this.lineHeight = (data.boundingBox.yMax - data.boundingBox.yMin + data.underlineThickness) * this.scale;
+    this.lineHeight =
+      (data.boundingBox.yMax - data.boundingBox.yMin + data.underlineThickness) * this.scale;
     this.lineHeight -= 0.1;
   }
 
@@ -23,8 +24,8 @@ export default class TextBuilder {
     let lines = text.split('\n');
     let pivot = new Object3D();
 
-    let changeInHeight = this.lineHeight * (lines.length - 1)
-    let yOffset = (changeInHeight) - changeInHeight / 2;
+    let changeInHeight = this.lineHeight * (lines.length - 1);
+    let yOffset = changeInHeight - changeInHeight / 2;
     for (let i = 0; i < lines.length; ++i) {
       let lineGroup = this._buildLine(lines[i]);
       lineGroup.translateY(yOffset);
@@ -54,13 +55,12 @@ export default class TextBuilder {
   }
 
   _getCharInfo(char, useCache = true) {
-    if (useCache && this._cache[char])
-      return this._cache[char];
+    if (useCache && this._cache[char]) return this._cache[char];
 
     let geom = new TextBufferGeometry(char, this.params);
     this._cache[char] = {
       geometry: geom,
-      width: this.params.font.data.glyphs[char].ha * this.scale
+      width: this.params.font.data.glyphs[char].ha * this.scale,
     };
 
     return this._cache[char];

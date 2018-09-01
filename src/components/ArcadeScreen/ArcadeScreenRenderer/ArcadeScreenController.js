@@ -1,17 +1,18 @@
-import { debounce } from 'lodash';
 import ArcadeScreenRenderer from './ArcadeScreenRenderer';
 import { clamp, getRandomRange, convertRange } from './utils';
 
 export default class ArcadeScreenController {
-  constructor({ rootElement, aspectRatio, width, height }) {
-    console.time('new ArcadeScreenRenderer()');
-    this.arcadeScreenRenderer = new ArcadeScreenRenderer(aspectRatio);
-    console.timeEnd('new ArcadeScreenRenderer()');
+  constructor({ aspectRatio, width, height, arcadeScreenRenderer }) {
+    if (arcadeScreenRenderer) {
+      this.arcadeScreenRenderer = arcadeScreenRenderer;
+      console.log('existing renderer');
+    } else if (arcadeScreenRenderer === undefined) {
+      console.time('new ArcadeScreenRenderer()');
+      this.arcadeScreenRenderer = new ArcadeScreenRenderer(aspectRatio);
+      console.timeEnd('new ArcadeScreenRenderer()');
+    }
 
-    this.rootElement = rootElement;
     this.canvasElement = this.arcadeScreenRenderer.getCanvasElement();
-    this.rootElement.append(this.canvasElement);
-    this.rootElement.classList.add('fade-in');
 
     // range between -1 and 1
     this.normalizedMouseX = 0;
@@ -20,12 +21,15 @@ export default class ArcadeScreenController {
     this.handleMouseMove = this.handleMouseMove.bind(this);
     this.canvasElement.addEventListener('mousemove', this.handleMouseMove, false);
 
-    this.handleWindowResize = debounce(this.handleWindowResize.bind(this), 300, false);
-    window.addEventListener('resize', this.handleWindowResize, false);
-
     this.animate = this.animate.bind(this);
-
     this.arcadeScreenRenderer.setSize(width, height);
+  }
+
+  mount(rootElement) {
+    this.rootElement = rootElement;
+    this.rootElement.append(this.canvasElement);
+    this.rootElement.classList.add('fade-in');
+
     this.animate(0);
   }
 
@@ -42,14 +46,9 @@ export default class ArcadeScreenController {
     this.normalizedMouseY = convertRange(offsetY, 0, this.canvasElement.offsetHeight, -1, 1);
   }
 
-  handleWindowResize(event) {
-    console.log('handleWindowResize', event);
-  }
-
   destroy() {
     cancelAnimationFrame(this.requestAnimationFrameId);
     this.canvasElement.removeEventListener('mousemove', this.handleMouseMove);
     window.removeEventListener('resize', this.handleWindowResize);
-    this.arcadeScreenRenderer = null;
   }
 }
