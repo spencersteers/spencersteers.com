@@ -17,24 +17,23 @@ export function waitUntilReady(func) {
 
   const waiting = function(...args) {
     waitArgs = args;
-    waitThis = this
+    waitThis = this;
 
     if (_isReady) {
       func.apply(waitThis, waitArgs);
     }
-  }
+  };
 
   function ready() {
     _isReady = true;
-    if (waitArgs && waitThis)
-      func.apply(waitThis, waitArgs);
+    if (waitArgs && waitThis) func.apply(waitThis, waitArgs);
   }
 
   function isReady() {
     return _isReady;
   }
 
-  waiting.ready = ready
-  waiting.isReady = isReady
-  return waiting
+  waiting.ready = ready;
+  waiting.isReady = isReady;
+  return waiting;
 }

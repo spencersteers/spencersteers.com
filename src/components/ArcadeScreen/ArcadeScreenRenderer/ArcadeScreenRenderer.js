@@ -67,7 +67,9 @@ export default class ArcadeScreenRenderer {
 
     this.renderer.clear();
     this.camera.rotateX((Math.PI / (180 / this.cameraRotationSpeed)) * cameraXRotSpeed * deltaTime);
-    this.camera.rotateY((cameraYRotation - this.camera.position.x) * 0.01 * this.cameraRotationSpeed * deltaTime);
+    this.camera.rotateY(
+      (cameraYRotation - this.camera.position.x) * 0.01 * this.cameraRotationSpeed * deltaTime
+    );
 
     this.composer.render(deltaTime);
   }
@@ -79,7 +81,9 @@ export default class ArcadeScreenRenderer {
 
     this.renderer.clear();
     this.camera.rotateX((Math.PI / (180 / this.cameraRotationSpeed)) * cameraXRotSpeed * deltaTime);
-    this.camera.rotateY((cameraYRotation - this.camera.position.x) * 0.01 * this.cameraRotationSpeed * deltaTime);
+    this.camera.rotateY(
+      (cameraYRotation - this.camera.position.x) * 0.01 * this.cameraRotationSpeed * deltaTime
+    );
 
     this.composer.render(deltaTime);
   }
@@ -134,7 +138,7 @@ export default class ArcadeScreenRenderer {
     let renderPass = new RenderPass(this.scene, this.camera);
     this.composer.addPass(renderPass);
 
-    let afterImagePass = new AfterimagePass(0.90);
+    let afterImagePass = new AfterimagePass(0.9);
     this.composer.addPass(afterImagePass);
 
     this.alphaRampShader = new ShaderPass(AlphaRampShader);
@@ -211,19 +215,20 @@ export default class ArcadeScreenRenderer {
     let pGeometry = new THREE.BufferGeometry();
     let pMaterial = new THREE.PointsMaterial({ color: new THREE.Color(1.0, 0, 0), size: 3.0 });
 
-    let color = new THREE.Color(1.0, 0.00, 0.00);
+    let color = new THREE.Color(1.0, 0.0, 0.0);
     let positions = [];
-    let colors = []
     for (var p = 0; p < count; p++) {
-      let pX = getRandomRange(-radius, radius);
-      let pY = getRandomRange(-radius, radius);
-      let pZ = getRandomRange(-radius, radius);
+      let pX = this.particlePosition(radius, 0);
+      let pY = this.particlePosition(radius, 0);
+      let pZ = this.particlePosition(radius, 20);
       positions.push(pX, pY, pZ);
-      colors.push(color.r, color.g, color.b);
     }
     pGeometry.addAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-    // pGeometry.addAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
-
     return new THREE.Points(pGeometry, pMaterial);
+  }
+
+  particlePosition(radius, minimum) {
+    let dir = Math.random() * 2 - 1;
+    return dir * (radius - minimum) + Math.sign(dir) * minimum;
   }
 }

@@ -39,16 +39,9 @@ export const reversePallette = {
 export function convertPalletteToHexStrings(colorPallette) {
   let hexPallette = {};
   Object.keys(colorPallette).forEach(key => {
-    hexPallette[key] = `#${colorPallette[key].getHexString()}`
+    hexPallette[key] = `#${colorPallette[key].getHexString()}`;
   });
   return hexPallette;
 }
 
-
-
-export const allPallettes = [
-  basePallette,
-  shift1Pallette,
-  reversePallette,
-  baseInvertPallette
-];
+export const allPallettes = [basePallette, shift1Pallette, reversePallette, baseInvertPallette];

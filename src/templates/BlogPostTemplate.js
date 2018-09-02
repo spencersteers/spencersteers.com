@@ -28,7 +28,7 @@ class BlogPostTemplate extends React.Component {
             paddingTop: rhythm(1),
             background: '#1f2228',
             borderBottom: '1px solid #17191d',
-            textAlign: 'center'
+            textAlign: 'center',
           }}
         >
           <div
@@ -46,18 +46,20 @@ class BlogPostTemplate extends React.Component {
               borderRight: '1px solid rgb(23, 25, 29)',
               borderRadius: '5px 5px 0 0',
               position: 'relative',
-              overflow: 'hidden'
+              overflow: 'hidden',
             }}
           >
             <video src="/screen_cropped.mp4" muted autoPlay loop playsInline width="300" />
-            <div style={{
-              position: 'absolute',
-              width: '100%',
-              height: 0,
-              boxShadow: '0 -4px 4px 4px rgba(0, 0, 0, 0.75)',
-              left: 0,
-              right: 0
-            }} />
+            <div
+              style={{
+                position: 'absolute',
+                width: '100%',
+                height: 0,
+                boxShadow: '0 -4px 4px 4px rgba(0, 0, 0, 0.75)',
+                left: 0,
+                right: 0,
+              }}
+            />
           </div>
         </header>
         <Layout location={this.props.location}>

@@ -20,11 +20,9 @@ class ArcadeScreen extends React.Component {
     let width = this.containerRef.current.offsetWidth;
     let height = width / aspectRatio;
 
-
     if (window._arcadeScreen.isInitialized()) {
       window._arcadeScreen.mount(this.containerRef.current, width, height);
-    }
-    else {
+    } else {
       this.containerRef.current.classList.add('fade');
       window._arcadeScreen.mount(this.containerRef.current, width, height, () => {
         this.containerRef.current.classList.add('show');
@@ -97,7 +95,7 @@ class ArcadeScreen extends React.Component {
           fluid={this.props.arcadeCabinet}
           outerWrapperClassName="arcade-mask-outer-wrapper"
           fadeIn={false}
-          />
+        />
         <div
           className="arcade-panel-padding"
           style={{
@@ -140,9 +138,8 @@ ArcadeScreen.propTypes = {
   arcadeCabinet: imageShape,
   buttonSpriteSheetSrc: PropTypes.string.isRequired,
   buttonWidth: PropTypes.number.isRequired,
-  buttonHeight: PropTypes.number.isRequired
+  buttonHeight: PropTypes.number.isRequired,
 };
-
 
 class ArcadeScreenControls extends React.Component {
   constructor(props) {
@@ -160,7 +157,7 @@ class ArcadeScreenControls extends React.Component {
             backgroundImage: `url(${this.props.spriteSheetSrc})`,
             width: this.props.buttonWidth,
             height: this.props.buttonHeight,
-            float: 'left'
+            float: 'left',
           }}
         />
         <button
@@ -171,11 +168,11 @@ class ArcadeScreenControls extends React.Component {
             backgroundImage: `url(${this.props.spriteSheetSrc})`,
             width: this.props.buttonWidth,
             height: this.props.buttonHeight,
-            float: 'right'
+            float: 'right',
           }}
         />
       </div>
-    )
+    );
   }
 }
 

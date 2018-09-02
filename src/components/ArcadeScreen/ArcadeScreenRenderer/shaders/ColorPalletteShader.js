@@ -66,13 +66,13 @@ let ColorPalletteShader = {
   R: {
     uniforms: getUniforms(),
     vertexShader: getVertexShader(),
-    fragmentShader: buildFragmentShader('r')
+    fragmentShader: buildFragmentShader('r'),
   },
   B: {
     uniforms: getUniforms(),
     vertexShader: getVertexShader(),
-    fragmentShader: buildFragmentShader('b')
-  }
+    fragmentShader: buildFragmentShader('b'),
+  },
 };
 
 export { ColorPalletteShader };

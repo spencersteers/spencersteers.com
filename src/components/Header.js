@@ -22,7 +22,7 @@ const Header = props => {
         paddingTop: rhythm(1),
         background: '#1f2228',
         borderBottom: '1px solid #17191d',
-        textAlign: 'center'
+        textAlign: 'center',
       }}
     >
       <ArcadeScreen

@@ -4,10 +4,7 @@ import * as dat from 'dat.gui';
 
 import ArcadeScreenRenderer from './ArcadeScreenRenderer';
 import { clamp, getRandomRange, convertRange, waitUntilReady } from './utils';
-import {
-  allPallettes,
-  convertPalletteToHexStrings
- } from './ColorPallettes';
+import { allPallettes, convertPalletteToHexStrings } from './ColorPallettes';
 
 export default class ArcadeScreen {
   constructor() {
@@ -19,7 +16,7 @@ export default class ArcadeScreen {
 
     setTimeout(() => {
       if (!Detector.webgl) {
-        console.log("Browser does not support webgl.");
+        console.log('Browser does not support webgl.');
         return;
       }
 
@@ -38,10 +35,9 @@ export default class ArcadeScreen {
     this.handleMouseMove = this.handleMouseMove.bind(this);
     this.animate = this.animate.bind(this);
 
-
     // gui
     let colorPallette = convertPalletteToHexStrings(allPallettes[this.currentPalletteIndex]);
-    let gui = new dat.GUI( { name: 'Color Pallette' } );
+    let gui = new dat.GUI({ name: 'Color Pallette' });
     Object.keys(colorPallette).forEach((key, value) => {
       gui.addColor(colorPallette, key).onChange(val => {
         this.arcadeScreenRenderer.setColorPallette(colorPallette);
@@ -51,25 +47,21 @@ export default class ArcadeScreen {
     let printButton = {
       print: function() {
         console.log(JSON.stringify(colorPallette, '', 2));
-      }
+      },
     };
     gui.add(printButton, 'print');
   }
 
   nextPallette() {
-    if (this.currentPalletteIndex === allPallettes.length - 1)
-      this.currentPalletteIndex = 0;
-    else
-      this.currentPalletteIndex++;
+    if (this.currentPalletteIndex === allPallettes.length - 1) this.currentPalletteIndex = 0;
+    else this.currentPalletteIndex++;
 
     this.arcadeScreenRenderer.setColorPallette(allPallettes[this.currentPalletteIndex]);
   }
 
   previousPallette() {
-    if (this.currentPalletteIndex === 0)
-      this.currentPalletteIndex = allPallettes.length - 1;
-    else
-      this.currentPalletteIndex--;
+    if (this.currentPalletteIndex === 0) this.currentPalletteIndex = allPallettes.length - 1;
+    else this.currentPalletteIndex--;
 
     this.arcadeScreenRenderer.setColorPallette(allPallettes[this.currentPalletteIndex]);
   }
@@ -87,11 +79,7 @@ export default class ArcadeScreen {
 
   animate(time) {
     this._requestAnimationFrameId = requestAnimationFrame(this.animate.bind(this));
-    this.arcadeScreenRenderer.render(
-      this._normalizedMouseX,
-      this._normalizedMouseY,
-      time
-    );
+    this.arcadeScreenRenderer.render(this._normalizedMouseX, this._normalizedMouseY, time);
   }
 
   handleMouseMove(event) {
@@ -117,24 +105,22 @@ export default class ArcadeScreen {
   exportImages(frames, fps = 60) {
     cancelAnimationFrame(this._requestAnimationFrameId);
 
-
     setTimeout(() => {
       let { width, height } = this.arcadeScreenRenderer.getSize();
       // this.arcadeScreenRenderer.setSize(width * 3, height * 3);
       let canvas = this.arcadeScreenRenderer.getCanvasElement();
       let deltaTime = 1 / fps;
       for (let i = 0; i < frames; ++i) {
-        this.arcadeScreenRenderer.renderDeltaTime(
-          0,
-          0,
-          deltaTime
-        );
+        this.arcadeScreenRenderer.renderDeltaTime(0, 0, deltaTime);
 
-        let linkTitle = `Frame_${padStart(i, 3, '0')}.png`
+        let linkTitle = `Frame_${padStart(i, 3, '0')}.png`;
         let downloadLink = document.createElement('a');
         downloadLink.textContent = linkTitle;
         downloadLink.setAttribute('download', linkTitle);
-        downloadLink.setAttribute('href', canvas.toDataURL("image/png").replace("image/png", "image/octet-stream"));
+        downloadLink.setAttribute(
+          'href',
+          canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream')
+        );
         downloadLink.setAttribute('style', 'display: block; padding-bottom: 5px');
         document.body.append(downloadLink);
       }
@@ -142,17 +128,17 @@ export default class ArcadeScreen {
       let batches = {};
 
       let i = 0;
-      let k = 0
+      let k = 0;
       document.querySelectorAll('a').forEach(element => {
         if (!batches[k]) batches[k] = [];
         if (element.parentNode == document.body) {
-            batches[k].push(element);
+          batches[k].push(element);
           ++i;
 
           if (i > 4) {
             let downloadBatch = batches[k];
             setTimeout(() => {
-              downloadBatch.forEach((element) => element.click());
+              downloadBatch.forEach(element => element.click());
             }, 5000 * k);
             k += 1;
             i = 0;
@@ -162,8 +148,6 @@ export default class ArcadeScreen {
       });
 
       console.log('batches', batches);
-
-
     }, 1000);
   }
 }
