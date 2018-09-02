@@ -125,7 +125,6 @@ export default class ArcadeScreenRenderer {
 
     this.camera = this.createCamera();
     this.camera.aspectRatio = this.aspectRatio;
-    this.camera.position.z = 10;
     this.scene.add(this.camera);
 
     let particles = this.createParticles();
@@ -184,6 +183,7 @@ export default class ArcadeScreenRenderer {
 
     console.time('text1');
     let mottoTextGroup = this.textBuilder.build('- YOUNG PROFESSIONAL -');
+    mottoTextGroup.name = "mottoTextGroup";
     mottoTextGroup.position.z = -10;
     mottoTextGroup.position.y = -2.25;
     mottoTextGroup.position.x = 0;
@@ -195,6 +195,7 @@ export default class ArcadeScreenRenderer {
 
     console.time('text2');
     let titleTextGroup = this.textBuilder.build('SPENCER\nSTEERS');
+    titleTextGroup.name = "titleTextGroup";
     titleTextGroup.rotation.x = (-20 * Math.PI) / 180;
     titleTextGroup.position.z = -10;
     titleTextGroup.position.y = 2.0;
@@ -210,7 +211,7 @@ export default class ArcadeScreenRenderer {
   }
 
   createParticles(count = 500) {
-    let radius = 400;
+    let radius = 300;
 
     let pGeometry = new THREE.BufferGeometry();
     let pMaterial = new THREE.PointsMaterial({ color: new THREE.Color(1.0, 0, 0), size: 3.0 });
@@ -218,16 +219,16 @@ export default class ArcadeScreenRenderer {
     let color = new THREE.Color(1.0, 0.0, 0.0);
     let positions = [];
     for (var p = 0; p < count; p++) {
-      let pX = this.particlePosition(radius, 0);
-      let pY = this.particlePosition(radius, 0);
-      let pZ = this.particlePosition(radius, 20);
+      let pX = this.particlePosition(radius);
+      let pY = this.particlePosition(radius);
+      let pZ = this.particlePosition(radius, 15);
       positions.push(pX, pY, pZ);
     }
     pGeometry.addAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
     return new THREE.Points(pGeometry, pMaterial);
   }
 
-  particlePosition(radius, minimum) {
+  particlePosition(radius, minimum = 0) {
     let dir = Math.random() * 2 - 1;
     return dir * (radius - minimum) + Math.sign(dir) * minimum;
   }

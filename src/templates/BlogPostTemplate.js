@@ -49,16 +49,13 @@ class BlogPostTemplate extends React.Component {
               overflow: 'hidden',
             }}
           >
-            <video src="/screen_cropped.mp4" muted autoPlay loop playsInline width="300" />
-            <div
-              style={{
-                position: 'absolute',
-                width: '100%',
-                height: 0,
-                boxShadow: '0 -4px 4px 4px rgba(0, 0, 0, 0.75)',
-                left: 0,
-                right: 0,
-              }}
+            <video
+              src="/screen_cropped_1s.mp4"
+              width="300"
+              playsInline
+              autoPlay
+              loop
+              muted
             />
           </div>
         </header>
