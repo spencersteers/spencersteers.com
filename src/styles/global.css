@@ -1,4 +1,4 @@
-* { box-sizing: border-box; }
+#__gatsby * { box-sizing: border-box; }
 body, html {
   background: #262931;
   height: 100%;
@@ -63,4 +63,13 @@ a svg {
 }
 .arcade-button.right:active {
   background-position-x: -114px;
+}
+
+/* dat.gui */
+.dg.ac button, input, optgroup, select, textarea {
+  line-height: normal;
+}
+
+.dg.ac li {
+  margin: 0;
 }

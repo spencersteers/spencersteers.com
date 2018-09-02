@@ -1,7 +1,7 @@
 import { Detector } from 'three-full';
-import wrap from 'lodash/get';
 import ArcadeScreenRenderer from './ArcadeScreenRenderer';
 import { clamp, getRandomRange, convertRange, waitUntilReady } from './utils';
+import { padStart } from 'lodash';
 
 export default class ArcadeScreen {
   constructor() {
@@ -23,8 +23,6 @@ export default class ArcadeScreen {
     });
 
     // mouse position over canvas normalized to -1 and 1
-
-    this._fadeInCanvas = true;
     this._normalizedMouseX = 0;
     this._normalizedMouseY = 0;
 
@@ -41,14 +39,9 @@ export default class ArcadeScreen {
   }
 
   mount(rootElement, width, height, onMounted) {
-    console.log('this', this);
     let canvas = this.arcadeScreenRenderer.getCanvasElement();
 
     if (canvas.parentElement) console.error('ArcadeScreen is already mounted!');
-
-    if (this._fadeInCanvas) {
-      this._fadeInCanvas = false;
-    }
 
     this.arcadeScreenRenderer.setSize(width, height);
     rootElement.append(this.arcadeScreenRenderer.getCanvasElement());
@@ -83,5 +76,58 @@ export default class ArcadeScreen {
 
   isInitialized() {
     return this.arcadeScreenRenderer !== null && this.arcadeScreenRenderer !== undefined;
+  }
+
+  exportImages(frames, fps = 60) {
+    cancelAnimationFrame(this._requestAnimationFrameId);
+
+
+    setTimeout(() => {
+      let { width, height } = this.arcadeScreenRenderer.getSize();
+      // this.arcadeScreenRenderer.setSize(width * 3, height * 3);
+      let canvas = this.arcadeScreenRenderer.getCanvasElement();
+      let deltaTime = 1 / fps;
+      for (let i = 0; i < frames; ++i) {
+        this.arcadeScreenRenderer.renderDeltaTime(
+          0,
+          0,
+          deltaTime
+        );
+
+        let linkTitle = `Frame_${padStart(i, 3, '0')}.png`
+        let downloadLink = document.createElement('a');
+        downloadLink.textContent = linkTitle;
+        downloadLink.setAttribute('download', linkTitle);
+        downloadLink.setAttribute('href', canvas.toDataURL("image/png").replace("image/png", "image/octet-stream"));
+        downloadLink.setAttribute('style', 'display: block; padding-bottom: 5px');
+        document.body.append(downloadLink);
+      }
+
+      let batches = {};
+
+      let i = 0;
+      let k = 0
+      document.querySelectorAll('a').forEach(element => {
+        if (!batches[k]) batches[k] = [];
+        if (element.parentNode == document.body) {
+            batches[k].push(element);
+          ++i;
+
+          if (i > 4) {
+            let downloadBatch = batches[k];
+            setTimeout(() => {
+              downloadBatch.forEach((element) => element.click());
+            }, 5000 * k);
+            k += 1;
+            i = 0;
+            batches[k] = [];
+          }
+        }
+      });
+
+      console.log('batches', batches);
+
+
+    }, 1000);
   }
 }

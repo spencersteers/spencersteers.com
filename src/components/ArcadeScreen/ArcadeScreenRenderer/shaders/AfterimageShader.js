@@ -47,6 +47,10 @@ let AfterimageShader = {
 
     'gl_FragColor = max(texelNew, texelOld);',
 
+    // 'gl_FragColor.g = 0.0;',
+
+    // 'gl_FragColor.b = texelNew.b;',
+
     '}',
   ].join('\n'),
 };

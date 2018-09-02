@@ -6,27 +6,24 @@ import get from 'lodash/get';
 import Layout from '../components/Layout';
 import ArcadeScreen from '../components/ArcadeScreen';
 
-const headerStyles = {
-  height: 500,
-  width: '100%',
-  background: '#1f2228',
-  borderBottom: '1px solid #17191d',
-};
-
 const Header = props => {
   let cabSrc = get(props, 'data.arcadeCabinet.childImageSharp.fixed.src');
   let cabB64 = get(props, 'data.arcadeCabinet.childImageSharp.fixed.base64');
   let images = {
     arcadeCabinet: get(props, 'data.arcadeCabinet.childImageSharp.fluid'),
-    buttonLeftUp: get(props, 'data.buttonLeftUp.childImageSharp.fixed'),
-    buttonRightUp: get(props, 'data.buttonRightUp.childImageSharp.fixed'),
     buttonSpriteSheet: get(props, 'data.buttonSpriteSheet.childImageSharp.fixed'),
   };
   images.arcadeCabinet['width'] = 300;
   images.arcadeCabinet['height'] = 300 / images.arcadeCabinet.aspectRatio;
   return (
     <header
-      style={{ ...headerStyles, ...{ height: 540, paddingTop: rhythm(1), textAlign: 'center' } }}
+      style={{
+        height: 540,
+        paddingTop: rhythm(1),
+        background: '#1f2228',
+        borderBottom: '1px solid #17191d',
+        textAlign: 'center'
+      }}
     >
       <ArcadeScreen
         arcadeCabinet={images.arcadeCabinet}

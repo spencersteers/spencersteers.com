@@ -22,7 +22,17 @@ class BlogPostTemplate extends React.Component {
         description={post.excerpt}
         url={`${siteUrl}${post.fields.slug}`}
       >
-        <Header />
+        <header
+          style={{
+            height: 540,
+            paddingTop: rhythm(1),
+            background: '#1f2228',
+            borderBottom: '1px solid #17191d',
+            textAlign: 'center'
+          }}
+        >
+          <video src="/out3.mp4" muted autoPlay loop playsInline width="252" height="336"/>
+        </header>
         <Layout location={this.props.location}>
           <BlogPost post={post} />
           <ul
@@ -65,6 +75,17 @@ export const pageQuery = graphql`
     }
     markdownRemark(fields: { slug: { eq: $slug } }) {
       ...BlogPost
+    }
+    arcadeCabinet: file(relativePath: { eq: "ArcadeCabinet_RoundedRoughSmall.png" }) {
+      childImageSharp {
+        fluid(maxWidth: 300) {
+          base64
+          aspectRatio
+          src
+          srcSet
+          sizes
+        }
+      }
     }
   }
 `;

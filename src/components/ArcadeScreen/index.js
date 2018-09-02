@@ -130,7 +130,7 @@ class ArcadeScreen extends React.Component {
 }
 
 const imageShape = PropTypes.shape({
-  src: PropTypes.number.isRequired,
+  src: PropTypes.string.isRequired,
   width: PropTypes.number.isRequired,
   height: PropTypes.number.isRequired,
   aspectRatio: PropTypes.number.isRequired,
@@ -138,7 +138,7 @@ const imageShape = PropTypes.shape({
 
 ArcadeScreen.propTypes = {
   arcadeCabinet: imageShape,
-  buttonSpriteSheet: PropTypes.string.isRequired,
+  buttonSpriteSheetSrc: PropTypes.string.isRequired,
   buttonWidth: PropTypes.number.isRequired,
   buttonHeight: PropTypes.number.isRequired
 };

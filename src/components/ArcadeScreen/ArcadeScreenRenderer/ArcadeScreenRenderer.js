@@ -15,28 +15,57 @@ import { AfterimagePass } from './shaders/AfterimagePass';
 import { RadialDistortionShader } from './shaders/RadialDistortionShader';
 import { StaticShader } from './shaders/StaticShader';
 import { AlphaRampShader } from './shaders/AlphaRampShader';
+import { ColorPalletteShader } from './shaders/ColorPalletteShader';
 import { getRandomRange, convertRange } from './utils';
 import TextBuilder from './TextBuilder';
+
+import * as dat from 'dat.gui';
+
+let basePallette = {
+  c1: new THREE.Color('rgb(255, 235, 235)'),
+  c2: new THREE.Color('rgb(244, 220, 217)'),
+  c3: new THREE.Color('rgb(198, 191, 210)'),
+  c4: new THREE.Color('rgb(114, 108, 145)'),
+  c5: new THREE.Color('rgb(63, 52, 70)'),
+  c6: new THREE.Color('rgb(10, 10, 10)'),
+}
+
+let shift1Pallette = {
+  c1: new THREE.Color('rgb(255, 235, 235)'),
+  c2: new THREE.Color('rgb(244, 220, 217)'),
+  c3: new THREE.Color('rgb(210, 198, 191)'),
+  c4: new THREE.Color('rgb(145, 114, 108)'),
+  c5: new THREE.Color('rgb(70, 63, 52)'),
+  c6: new THREE.Color('rgb(10, 10, 10)'),
+}
+
+let reversePallette = {
+  c6: new THREE.Color('rgb(255, 235, 235)'),
+  c5: new THREE.Color('rgb(244, 220, 217)'),
+  c4: new THREE.Color('rgb(198, 191, 210)'),
+  c3: new THREE.Color('rgb(114, 108, 145)'),
+  c2: new THREE.Color('rgb(63, 52, 70)'),
+  c1: new THREE.Color('rgb(10, 10, 10)'),
+}
 
 export default class ArcadeScreenRenderer {
   constructor(aspectRatio) {
     console.group('ArcadeScreenRenderer:constructor');
     console.time('constructor');
-
     this.textBuilder = new TextBuilder({
       font: new THREE.Font(HelvetikerRegularFont),
       size: 0.7,
       height: 0.4,
       material: [
-        new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true }),
-        new THREE.MeshBasicMaterial({ color: 0x777777, transparent: true }),
+        new THREE.MeshBasicMaterial({ color: new THREE.Color(0.0, 0.0, 1.0), transparent: false }),
+        new THREE.MeshBasicMaterial({ color: new THREE.Color(0.0, 0.0, 0.5), transparent: false }),
       ],
     });
 
     this.aspectRatio = aspectRatio;
 
     this.clock = new THREE.Clock();
-    this.cameraRotationSpeed = 0.1; // degrees per frame
+    this.cameraRotationSpeed = 10;
 
     // THREE
     this.scene;
@@ -64,13 +93,24 @@ export default class ArcadeScreenRenderer {
     let deltaTime = this.clock.getDelta();
     let elapsedTime = this.clock.getElapsedTime();
 
-    // this.fadeTween.update(elapsedTime * 1000);
+    let cameraXRotSpeed = convertRange(cameraXRotation, -1, 1, 1, 2);
+
+    this.renderer.clear();
+    this.camera.rotateX((Math.PI / (180 / this.cameraRotationSpeed)) * cameraXRotSpeed * deltaTime);
+    this.camera.rotateY((cameraYRotation - this.camera.position.x) * 0.01 * this.cameraRotationSpeed * deltaTime);
+
+    this.composer.render(deltaTime);
+  }
+
+  renderDeltaTime(cameraYRotation, cameraXRotation, deltaTime) {
+    if (!this.clock.running) this.clock.start();
 
     let cameraXRotSpeed = convertRange(cameraXRotation, -1, 1, 1, 2);
 
     this.renderer.clear();
-    this.camera.rotateX((Math.PI / (180 / this.cameraRotationSpeed)) * cameraXRotSpeed);
-    this.camera.rotateY((cameraYRotation - this.camera.position.x) * 0.005);
+    this.camera.rotateX((Math.PI / (180 / this.cameraRotationSpeed)) * cameraXRotSpeed * deltaTime);
+    this.camera.rotateY((cameraYRotation - this.camera.position.x) * 0.01 * this.cameraRotationSpeed * deltaTime);
+
     this.composer.render(deltaTime);
   }
 
@@ -118,11 +158,43 @@ export default class ArcadeScreenRenderer {
     let renderPass = new RenderPass(this.scene, this.camera);
     this.composer.addPass(renderPass);
 
-    let afterImagePass = new AfterimagePass(0.9);
+    let afterImagePass = new AfterimagePass(0.90);
     this.composer.addPass(afterImagePass);
 
-    var alphaRampShader = new ShaderPass(AlphaRampShader);
+    let alphaRampShader = new ShaderPass(AlphaRampShader);
     this.composer.addPass(alphaRampShader);
+
+    let colorPallette = {
+      c1: `#${reversePallette.c1.getHexString()}`,
+      c2: `#${reversePallette.c2.getHexString()}`,
+      c3: `#${reversePallette.c3.getHexString()}`,
+      c4: `#${reversePallette.c4.getHexString()}`,
+      c5: `#${reversePallette.c5.getHexString()}`,
+      c6: `#${reversePallette.c6.getHexString()}`
+    };
+
+    // let colorPallette = {
+    //   c1: `#${alphaRampShader.uniforms['c1'].value.getHexString()}`,
+    //   c2: `#${alphaRampShader.uniforms['c2'].value.getHexString()}`,
+    //   c3: `#${alphaRampShader.uniforms['c3'].value.getHexString()}`,
+    //   c4: `#${alphaRampShader.uniforms['c4'].value.getHexString()}`,
+    //   c5: `#${alphaRampShader.uniforms['c5'].value.getHexString()}`,
+    //   c6: `#${alphaRampShader.uniforms['c6'].value.getHexString()}`
+    // };
+
+    let gui = new dat.GUI( { name: 'Color Pallette' } );
+    Object.keys(colorPallette).forEach((key, value) => {
+      gui.addColor(colorPallette, key).onChange(val => {
+        alphaRampShader.uniforms[key].value.set(val);
+      });
+    });
+
+    let printButton = {
+      print: function() {
+        console.log(JSON.stringify(colorPallette, '', 2));
+      }
+    };
+    gui.add(printButton, 'print');
 
     this.filmPass = new UniformShaderPass(FilmShader);
     this.filmPass.setUniforms({
@@ -193,16 +265,20 @@ export default class ArcadeScreenRenderer {
     let radius = 400;
 
     let pGeometry = new THREE.BufferGeometry();
-    let pMaterial = new THREE.PointsMaterial({ color: 0xffffff, size: 3.0 });
+    let pMaterial = new THREE.PointsMaterial({ color: new THREE.Color(1.0, 0, 0), size: 3.0 });
 
+    let color = new THREE.Color(1.0, 0.00, 0.00);
     let positions = [];
+    let colors = []
     for (var p = 0; p < count; p++) {
       let pX = getRandomRange(-radius, radius);
       let pY = getRandomRange(-radius, radius);
       let pZ = getRandomRange(-radius, radius);
       positions.push(pX, pY, pZ);
+      colors.push(color.r, color.g, color.b);
     }
     pGeometry.addAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    // pGeometry.addAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
 
     return new THREE.Points(pGeometry, pMaterial);
   }
