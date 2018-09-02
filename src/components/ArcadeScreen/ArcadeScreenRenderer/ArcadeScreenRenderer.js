@@ -8,7 +8,6 @@ import {
   VignetteShader,
 } from 'three-full';
 import HelvetikerRegularFont from 'three-full/sources/fonts/helvetiker_regular.typeface.json';
-import TWEEN from '@tweenjs/tween.js';
 
 import { UniformShaderPass } from './shaders/UniformShaderPass';
 import { AfterimagePass } from './shaders/AfterimagePass';
@@ -18,35 +17,6 @@ import { AlphaRampShader } from './shaders/AlphaRampShader';
 import { ColorPalletteShader } from './shaders/ColorPalletteShader';
 import { getRandomRange, convertRange } from './utils';
 import TextBuilder from './TextBuilder';
-
-import * as dat from 'dat.gui';
-
-let basePallette = {
-  c1: new THREE.Color('rgb(255, 235, 235)'),
-  c2: new THREE.Color('rgb(244, 220, 217)'),
-  c3: new THREE.Color('rgb(198, 191, 210)'),
-  c4: new THREE.Color('rgb(114, 108, 145)'),
-  c5: new THREE.Color('rgb(63, 52, 70)'),
-  c6: new THREE.Color('rgb(10, 10, 10)'),
-}
-
-let shift1Pallette = {
-  c1: new THREE.Color('rgb(255, 235, 235)'),
-  c2: new THREE.Color('rgb(244, 220, 217)'),
-  c3: new THREE.Color('rgb(210, 198, 191)'),
-  c4: new THREE.Color('rgb(145, 114, 108)'),
-  c5: new THREE.Color('rgb(70, 63, 52)'),
-  c6: new THREE.Color('rgb(10, 10, 10)'),
-}
-
-let reversePallette = {
-  c6: new THREE.Color('rgb(255, 235, 235)'),
-  c5: new THREE.Color('rgb(244, 220, 217)'),
-  c4: new THREE.Color('rgb(198, 191, 210)'),
-  c3: new THREE.Color('rgb(114, 108, 145)'),
-  c2: new THREE.Color('rgb(63, 52, 70)'),
-  c1: new THREE.Color('rgb(10, 10, 10)'),
-}
 
 export default class ArcadeScreenRenderer {
   constructor(aspectRatio) {
@@ -128,6 +98,12 @@ export default class ArcadeScreenRenderer {
     return this.renderer.domElement;
   }
 
+  setColorPallette(colorPallette) {
+    Object.keys(colorPallette).forEach(key => {
+      this.alphaRampShader.uniforms[key].value.set(colorPallette[key]);
+    });
+  }
+
   // setup / object builders
   setupScene() {
     console.group('ArcadeScreenRenderer:setupScene');
@@ -161,40 +137,8 @@ export default class ArcadeScreenRenderer {
     let afterImagePass = new AfterimagePass(0.90);
     this.composer.addPass(afterImagePass);
 
-    let alphaRampShader = new ShaderPass(AlphaRampShader);
-    this.composer.addPass(alphaRampShader);
-
-    let colorPallette = {
-      c1: `#${reversePallette.c1.getHexString()}`,
-      c2: `#${reversePallette.c2.getHexString()}`,
-      c3: `#${reversePallette.c3.getHexString()}`,
-      c4: `#${reversePallette.c4.getHexString()}`,
-      c5: `#${reversePallette.c5.getHexString()}`,
-      c6: `#${reversePallette.c6.getHexString()}`
-    };
-
-    // let colorPallette = {
-    //   c1: `#${alphaRampShader.uniforms['c1'].value.getHexString()}`,
-    //   c2: `#${alphaRampShader.uniforms['c2'].value.getHexString()}`,
-    //   c3: `#${alphaRampShader.uniforms['c3'].value.getHexString()}`,
-    //   c4: `#${alphaRampShader.uniforms['c4'].value.getHexString()}`,
-    //   c5: `#${alphaRampShader.uniforms['c5'].value.getHexString()}`,
-    //   c6: `#${alphaRampShader.uniforms['c6'].value.getHexString()}`
-    // };
-
-    let gui = new dat.GUI( { name: 'Color Pallette' } );
-    Object.keys(colorPallette).forEach((key, value) => {
-      gui.addColor(colorPallette, key).onChange(val => {
-        alphaRampShader.uniforms[key].value.set(val);
-      });
-    });
-
-    let printButton = {
-      print: function() {
-        console.log(JSON.stringify(colorPallette, '', 2));
-      }
-    };
-    gui.add(printButton, 'print');
+    this.alphaRampShader = new ShaderPass(AlphaRampShader);
+    this.composer.addPass(this.alphaRampShader);
 
     this.filmPass = new UniformShaderPass(FilmShader);
     this.filmPass.setUniforms({

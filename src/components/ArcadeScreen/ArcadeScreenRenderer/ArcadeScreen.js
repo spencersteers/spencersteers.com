@@ -1,14 +1,22 @@
 import { Detector } from 'three-full';
+import padStart from 'lodash/padStart';
+import * as dat from 'dat.gui';
+
 import ArcadeScreenRenderer from './ArcadeScreenRenderer';
 import { clamp, getRandomRange, convertRange, waitUntilReady } from './utils';
-import { padStart } from 'lodash';
+import {
+  allPallettes,
+  convertPalletteToHexStrings
+ } from './ColorPallettes';
 
 export default class ArcadeScreen {
   constructor() {
-
     this.aspectRatio = 3 / 4;
+    this.currentPalletteIndex = 0;
+
     this.mount = waitUntilReady(this.mount);
     this.onReady = waitUntilReady(this.onReady);
+
     setTimeout(() => {
       if (!Detector.webgl) {
         console.log("Browser does not support webgl.");
@@ -16,6 +24,7 @@ export default class ArcadeScreen {
       }
 
       this.arcadeScreenRenderer = new ArcadeScreenRenderer(this.aspectRatio);
+      this.arcadeScreenRenderer.setColorPallette(allPallettes[this.currentPalletteIndex]);
       this.arcadeScreenRenderer
         .getCanvasElement()
         .addEventListener('mousemove', this.handleMouseMove, false);
@@ -28,14 +37,41 @@ export default class ArcadeScreen {
 
     this.handleMouseMove = this.handleMouseMove.bind(this);
     this.animate = this.animate.bind(this);
+
+
+    // gui
+    let colorPallette = convertPalletteToHexStrings(allPallettes[this.currentPalletteIndex]);
+    let gui = new dat.GUI( { name: 'Color Pallette' } );
+    Object.keys(colorPallette).forEach((key, value) => {
+      gui.addColor(colorPallette, key).onChange(val => {
+        this.arcadeScreenRenderer.setColorPallette(colorPallette);
+      });
+    });
+
+    let printButton = {
+      print: function() {
+        console.log(JSON.stringify(colorPallette, '', 2));
+      }
+    };
+    gui.add(printButton, 'print');
   }
 
   nextPallette() {
-    console.log('nextPallette');
+    if (this.currentPalletteIndex === allPallettes.length - 1)
+      this.currentPalletteIndex = 0;
+    else
+      this.currentPalletteIndex++;
+
+    this.arcadeScreenRenderer.setColorPallette(allPallettes[this.currentPalletteIndex]);
   }
 
   previousPallette() {
-    console.log('previousPallette');
+    if (this.currentPalletteIndex === 0)
+      this.currentPalletteIndex = allPallettes.length - 1;
+    else
+      this.currentPalletteIndex--;
+
+    this.arcadeScreenRenderer.setColorPallette(allPallettes[this.currentPalletteIndex]);
   }
 
   mount(rootElement, width, height, onMounted) {
