@@ -21,9 +21,10 @@ class BlogPostTemplate extends React.Component {
         title={post.frontmatter.title}
         description={post.excerpt}
         url={`${siteUrl}${post.fields.slug}`}
+        className="blog-post"
       >
         <SmallHeader />
-        <Layout location={this.props.location}>
+        <Layout>
           <BlogPost post={post} />
           <ul
             style={{

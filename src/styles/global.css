@@ -24,6 +24,10 @@ a svg {
   fill: hsla(0, 0%, 100%, 0.9);
 }
 
+.page.front a svg {
+  display: none;
+}
+
 .hidden-title {
   height: 0;
   padding: 0;

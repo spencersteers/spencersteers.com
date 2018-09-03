@@ -19,7 +19,7 @@ class Index extends React.Component {
 
     const posts = get(this, 'props.data.allMarkdownRemark.edges');
     return (
-      <Page title={title} description={description} url={siteUrl}>
+      <Page title={title} description={description} url={siteUrl} className="front">
         <Header />
         <Layout location={this.props.location}>
           {posts.map(({ node }) => (

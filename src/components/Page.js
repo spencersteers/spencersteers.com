@@ -7,9 +7,9 @@ const defaultDescription = 'Young Professional';
 
 class Page extends React.Component {
   render() {
-    const { children, title, description, url } = this.props;
+    const { children, title, description, url, className } = this.props;
     return (
-      <div className="page">
+      <div className={`page ${className}`}>
         <Helmet title={title} htmlAttributes={{ lang: 'en' }}>
           <meta property="description" content={description} />
           <meta property="og:title" content={title} />
@@ -27,6 +27,7 @@ Page.propTypes = {
   title: PropTypes.string,
   description: PropTypes.string,
   url: PropTypes.string,
+  className: PropTypes.string,
 };
 
 export const pageMetadataFragment = graphql`
