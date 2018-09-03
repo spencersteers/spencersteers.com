@@ -66,25 +66,6 @@ exports.onCreateNode = ({ node, actions, getNode }) => {
 }
 
 exports.onCreateWebpackConfig = ({ stage, getConfig, rules, loaders, actions }) => {
-  // if (stage === 'build-javascript') {
-  //   let config = getConfig();
-  //   console.log('config', JSON.stringify(config, null, 2));
-  // }
-  actions.setWebpackConfig({
-    module: {
-      rules: [
-        {
-          test: /\.(gltf)$/,
-          use: 'gltf-loader-2'
-        },
-        {
-          test: /\.(bin)$/,
-          use: [loaders.file()]
-        }
-      ]
-    }
-  });
-
   if (stage === "build-html") {
     // modules depending on browser apis
     actions.setWebpackConfig({
