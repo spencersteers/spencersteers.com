@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'gatsby-link';
 import { rhythm } from '../utils/typography';
 import { SmallCabinet } from '../components/ArcadeCabinet';
 
@@ -11,7 +12,9 @@ const SmallHeader = props => {
         borderBottom: '1px solid #17191d',
       }}
     >
-      <SmallCabinet />
+      <Link to={'/'} title="spencersteers.com">
+        <SmallCabinet />
+      </Link>
     </header>
   );
 };

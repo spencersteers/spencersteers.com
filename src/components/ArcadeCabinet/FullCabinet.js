@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import Img from 'gatsby-image';
+import { StaticQuery, graphql } from 'gatsby';
 
 import {
   ARCADE_CABINET_ASPECT_RATIO,
@@ -9,6 +10,8 @@ import {
   SIDE_PANEL_WIDTH_RATIO,
   SIDE_PANEL_WIDTH,
   TOP_PANEL_HEIGHT_RATIO,
+  BUTTON_WIDTH,
+  BUTTON_HEIGHT,
 } from './layoutConstants';
 import { rhythm } from '../../utils/typography';
 import Controls from './Controls';
@@ -101,8 +104,8 @@ class FullCabinet extends React.Component {
             }}
           />
           <Controls
-            buttonWidth={this.props.buttonWidth}
-            buttonHeight={this.props.buttonHeight}
+            buttonWidth={BUTTON_WIDTH}
+            buttonHeight={BUTTON_HEIGHT}
             spriteSheetSrc={this.props.buttonSpriteSheetSrc}
             onButtonLeft={() => ArcadeScreenContext.getContext().previousPallette()}
             onButtonRight={() => ArcadeScreenContext.getContext().nextPallette()}
@@ -115,9 +118,43 @@ class FullCabinet extends React.Component {
 
 FullCabinet.propTypes = {
   arcadeCabinetImg: PropTypes.object.isRequired,
-  buttonSpriteSheetSrc: PropTypes.string.isRequired,
-  buttonWidth: PropTypes.number.isRequired,
-  buttonHeight: PropTypes.number.isRequired,
+  buttonSpriteSheetSrc: PropTypes.string.isRequired
 };
 
-export default FullCabinet;
+export default props => {
+  return (
+    <StaticQuery
+      query={graphql`
+        query {
+          arcadeCabinet: file(relativePath: { eq: "ArcadeCabinet_RoundedRoughSmall.png" }) {
+            childImageSharp {
+              fluid(maxWidth: 300) {
+                base64
+                aspectRatio
+                src
+                srcSet
+                sizes
+              }
+            }
+          }
+          buttonSpriteSheet: file(relativePath: { eq: "ArcadeButton_SpriteSheet.png" }) {
+            childImageSharp {
+              fixed(height: 69, width: 456) {
+                src
+              }
+            }
+          }
+        }
+      `}
+      render={data => {
+        return (
+          <FullCabinet
+            arcadeCabinetImg={data.arcadeCabinet.childImageSharp.fluid}
+            buttonSpriteSheetSrc={data.buttonSpriteSheet.childImageSharp.fixed.src}
+            {...props}
+          />
+        );
+      }}
+    />
+  );
+};
