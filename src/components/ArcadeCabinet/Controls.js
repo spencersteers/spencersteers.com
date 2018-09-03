@@ -11,7 +11,7 @@ class Controls extends React.Component {
       <div style={{ position: 'relative', top: '-20px', width: '100%', padding: '0 40px' }}>
         <button
           className="arcade-button left"
-          aria-label="Arcade Machine Left Button"
+          aria-label="Arcade Left Button"
           onClick={this.props.onButtonLeft}
           style={{
             backgroundImage: `url(${this.props.spriteSheetSrc})`,
@@ -22,7 +22,7 @@ class Controls extends React.Component {
         />
         <button
           className="arcade-button right"
-          aria-label="Arcade Machine Right Button"
+          aria-label="Arcade Right Button"
           onClick={this.props.onButtonRight}
           style={{
             backgroundImage: `url(${this.props.spriteSheetSrc})`,

@@ -42,7 +42,7 @@ class FullCabinet extends React.Component {
   }
 
   componentWillUnmount() {
-    window._arcadeScreen.unmount();
+    ArcadeScreenContext.getContext().unmount();
   }
 
   shouldComponentUpdate() {
@@ -68,6 +68,7 @@ class FullCabinet extends React.Component {
     let screenHeight = screenWidth / this.props.screenAspectRatio;
     return (
       <div
+        aria-label="Arcade Cabinet"
         className="arcade-cabinet"
         style={{
           height: '100%',
