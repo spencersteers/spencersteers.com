@@ -93,7 +93,7 @@ exports.onCreateWebpackConfig = ({ stage, getConfig, rules, loaders, actions }) 
           {
             test: [
               /three-full.*\.js$/,
-              /ArcadeScreenRenderer/,
+              /ArcadeScreen/,
             ],
             use: [
               loaders.null()

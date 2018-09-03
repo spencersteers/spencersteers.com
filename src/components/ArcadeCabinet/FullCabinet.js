@@ -12,6 +12,7 @@ import {
 } from './layoutConstants';
 import { rhythm } from '../../utils/typography';
 import Controls from './Controls';
+import { ArcadeScreenContext } from '../ArcadeScreen';
 
 class FullCabinet extends React.Component {
   static defaultProps = {
@@ -28,10 +29,10 @@ class FullCabinet extends React.Component {
     let height = width / this.props.screenAspectRatio;
 
     if (window._arcadeScreen.isInitialized()) {
-      window._arcadeScreen.mount(this.containerRef.current, width, height);
+      ArcadeScreenContext.getContext().mount(this.containerRef.current, width, height);
     } else {
       this.containerRef.current.classList.add('fade');
-      window._arcadeScreen.mount(this.containerRef.current, width, height, () => {
+      ArcadeScreenContext.getContext().mount(this.containerRef.current, width, height, () => {
         this.containerRef.current.classList.add('show');
       });
     }
@@ -103,8 +104,8 @@ class FullCabinet extends React.Component {
             buttonWidth={this.props.buttonWidth}
             buttonHeight={this.props.buttonHeight}
             spriteSheetSrc={this.props.buttonSpriteSheetSrc}
-            onButtonLeft={() => window._arcadeScreen.previousPallette()}
-            onButtonRight={() => window._arcadeScreen.nextPallette()}
+            onButtonLeft={() => ArcadeScreenContext.getContext().previousPallette()}
+            onButtonRight={() => ArcadeScreenContext.getContext().nextPallette()}
           />
         </div>
       </div>
