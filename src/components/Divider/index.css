@@ -1,0 +1,11 @@
+.divider-wave_path-horizontal {
+  animation: shiftHorizontal 1s linear infinite;
+}
+@keyframes shiftHorizontal {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-20px);
+  }
+}
