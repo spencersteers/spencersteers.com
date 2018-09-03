@@ -1,0 +1,2 @@
+export const ARCADE_CABINET_WIDTH = 300;
+export const SMALL_CABINET_HEIGHT = 184;

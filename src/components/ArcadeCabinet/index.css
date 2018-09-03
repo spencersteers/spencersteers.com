@@ -1,0 +1,7 @@
+.arcade-cabinet {
+  background-color: #262931;
+  border-left: 1px solid rgb(23, 25, 29);
+  border-top: 1px solid rgb(23, 25, 29);
+  border-right: 1px solid rgb(23, 25, 29);
+  border-radius: 5px 5px 0 0;
+}
