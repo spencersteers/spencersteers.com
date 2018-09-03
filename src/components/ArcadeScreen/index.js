@@ -10,8 +10,7 @@ export const ArcadeScreenContext = {
   },
 
   createContext() {
-    if (this.exists())
-      console.warn('ArcadeScreenContext already exists');
+    if (this.exists()) console.warn('ArcadeScreenContext already exists');
 
     window._arcadeScreen = new ArcadeScreen();
   },

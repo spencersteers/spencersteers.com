@@ -18,8 +18,8 @@ const SmallCabinet = ({ width, height, poster, videoSrc }) => {
       }}
     >
       <video
-        src="/screen_cropped.mp4"
-        poster="/static/Poster-20127cdf2b20fb3b342618e844c8b71b-c7f93.jpg"
+        src={videoSrc}
+        poster={poster}
         width={width}
         height={height}
         playsInline

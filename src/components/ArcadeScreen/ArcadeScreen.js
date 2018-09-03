@@ -1,6 +1,5 @@
 import { Detector } from 'three-full';
 import padStart from 'lodash/padStart';
-import * as dat from 'dat.gui';
 
 import ArcadeScreenRenderer from './ArcadeScreenRenderer';
 import { clamp, getRandomRange, convertRange, waitUntilReady } from './utils';
@@ -35,21 +34,9 @@ export default class ArcadeScreen {
     this.handleMouseMove = this.handleMouseMove.bind(this);
     this.animate = this.animate.bind(this);
 
-    // gui
-    let colorPallette = convertPalletteToHexStrings(allPallettes[this.currentPalletteIndex]);
-    let gui = new dat.GUI({ name: 'Color Pallette' });
-    Object.keys(colorPallette).forEach((key, value) => {
-      gui.addColor(colorPallette, key).onChange(val => {
-        this.arcadeScreenRenderer.setColorPallette(colorPallette);
-      });
-    });
-
-    let printButton = {
-      print: function() {
-        console.log(JSON.stringify(colorPallette, '', 2));
-      },
-    };
-    gui.add(printButton, 'print');
+    if (process.env.NODE_ENV !== 'production') {
+      this.createGUI();
+    }
   }
 
   nextPallette() {
@@ -102,17 +89,37 @@ export default class ArcadeScreen {
     return this.arcadeScreenRenderer !== null && this.arcadeScreenRenderer !== undefined;
   }
 
-  exportImages(frames, fps = 60) {
-    cancelAnimationFrame(this._requestAnimationFrameId);
+  createGUI() {
+    const dat = require('dat.gui');
+    let colorPallette = convertPalletteToHexStrings(allPallettes[this.currentPalletteIndex]);
+    let gui = new dat.GUI({ name: 'Color Pallette' });
+    Object.keys(colorPallette).forEach((key, value) => {
+      gui.addColor(colorPallette, key).onChange(val => {
+        this.arcadeScreenRenderer.setColorPallette(colorPallette);
+      });
+    });
 
+    let printButton = {
+      print: function() {
+        console.log(JSON.stringify(colorPallette, '', 2));
+      },
+    };
+    gui.add(printButton, 'print');
+  }
+
+  // Rendering still frames
+  _exportImages(frames, fps = 60) {
+    if (process.env.NODE_ENV === 'production') {
+      return;
+    }
+
+    cancelAnimationFrame(this._requestAnimationFrameId);
     setTimeout(() => {
       let { width, height } = this.arcadeScreenRenderer.getSize();
-      // this.arcadeScreenRenderer.setSize(width * 3, height * 3);
       let canvas = this.arcadeScreenRenderer.getCanvasElement();
       let deltaTime = 1 / fps;
       for (let i = 0; i < frames; ++i) {
         this.arcadeScreenRenderer.renderDeltaTime(0, 0, deltaTime);
-
         let linkTitle = `Frame_${padStart(i, 3, '0')}.png`;
         let downloadLink = document.createElement('a');
         downloadLink.textContent = linkTitle;
@@ -126,7 +133,6 @@ export default class ArcadeScreen {
       }
 
       let batches = {};
-
       let i = 0;
       let k = 0;
       document.querySelectorAll('a').forEach(element => {
@@ -146,7 +152,6 @@ export default class ArcadeScreen {
           }
         }
       });
-
       console.log('batches', batches);
     }, 1000);
   }

@@ -119,7 +119,7 @@ class FullCabinet extends React.Component {
 
 FullCabinet.propTypes = {
   arcadeCabinetImg: PropTypes.object.isRequired,
-  buttonSpriteSheetSrc: PropTypes.string.isRequired
+  buttonSpriteSheetSrc: PropTypes.string.isRequired,
 };
 
 export default props => {

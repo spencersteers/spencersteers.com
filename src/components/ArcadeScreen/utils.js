@@ -37,3 +37,8 @@ export function waitUntilReady(func) {
   waiting.isReady = isReady;
   return waiting;
 }
+
+export function positionInSphere(radius, minimum = 0) {
+  let dir = Math.random() * 2 - 1;
+  return dir * (radius - minimum) + Math.sign(dir) * minimum;
+}

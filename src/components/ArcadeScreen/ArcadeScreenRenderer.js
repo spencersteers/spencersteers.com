@@ -1,12 +1,4 @@
 import * as THREE from 'three-full';
-import {
-  EffectComposer,
-  RenderPass,
-  ShaderPass,
-  CopyShader,
-  FilmShader,
-  VignetteShader,
-} from 'three-full';
 import HelvetikerRegularFont from 'three-full/sources/fonts/helvetiker_regular.typeface.json';
 
 import { UniformShaderPass } from './shaders/UniformShaderPass';
@@ -15,46 +7,137 @@ import { RadialDistortionShader } from './shaders/RadialDistortionShader';
 import { StaticShader } from './shaders/StaticShader';
 import { AlphaRampShader } from './shaders/AlphaRampShader';
 import { ColorPalletteShader } from './shaders/ColorPalletteShader';
-import { getRandomRange, convertRange } from './utils';
+import { getRandomRange, convertRange, positionInSphere } from './utils';
 import TextBuilder from './TextBuilder';
 
 export default class ArcadeScreenRenderer {
   constructor(aspectRatio) {
-    console.group('ArcadeScreenRenderer:constructor');
-    console.time('constructor');
+    /** INIT **/
+    this.scene = new THREE.Scene();
+    this.clock = new THREE.Clock();
+
+    // camera
+    this.aspectRatio = aspectRatio;
+    this.cameraRotationSpeed = 10;
+    let cameraParams = {
+      viewAngle: 45,
+      aspectRatio: this.aspectRatio,
+      nearClip: 0.1,
+      farClip: 10000,
+    };
+    this.camera = new THREE.PerspectiveCamera(
+      cameraParams.viewAngle,
+      cameraParams.aspectRatio,
+      cameraParams.nearClip,
+      cameraParams.farClip
+    );
+    this.scene.add(this.camera);
+
+    // particles
+    let radius = 300;
+    let pGeometry = new THREE.BufferGeometry();
+    let pMaterial = new THREE.PointsMaterial({ color: new THREE.Color(1.0, 0, 0), size: 3.0 });
+    let positions = [];
+    for (var p = 0; p < 500; p++) {
+      let pX = positionInSphere(radius);
+      let pY = positionInSphere(radius);
+      let pZ = positionInSphere(radius, 15);
+      positions.push(pX, pY, pZ);
+    }
+    pGeometry.addAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
+    let particles = new THREE.Points(pGeometry, pMaterial);
+    this.scene.add(particles);
+
+    // text
+    let textParams = {
+      titleSize: 0.7,
+      mottoSize: 0.275,
+      height: 0.4,
+    };
     this.textBuilder = new TextBuilder({
       font: new THREE.Font(HelvetikerRegularFont),
-      size: 0.7,
-      height: 0.4,
+      size: textParams.titleSize,
+      height: textParams.height,
       material: [
         new THREE.MeshBasicMaterial({ color: new THREE.Color(0.0, 0.0, 1.0), transparent: false }),
         new THREE.MeshBasicMaterial({ color: new THREE.Color(0.0, 0.0, 0.5), transparent: false }),
       ],
     });
 
-    this.aspectRatio = aspectRatio;
+    let mottoTextGroup = this.textBuilder.build('- YOUNG PROFESSIONAL -');
+    mottoTextGroup.position.z = -10;
+    mottoTextGroup.position.y = -2.25;
+    mottoTextGroup.position.x = 0;
+    mottoTextGroup.scale.x = 0.392857143;
+    mottoTextGroup.scale.y = 0.392857143;
+    mottoTextGroup.scale.z = 0.392857143;
+    this.camera.add(mottoTextGroup);
 
-    this.clock = new THREE.Clock();
-    this.cameraRotationSpeed = 10;
-
-    // THREE
-    this.scene;
-    this.renderer;
+    let titleTextGroup = this.textBuilder.build('SPENCER\nSTEERS');
+    titleTextGroup.rotation.x = (-20 * Math.PI) / 180;
+    titleTextGroup.position.z = -10;
+    titleTextGroup.position.y = 2.0;
+    titleTextGroup.position.x = 0;
+    this.camera.add(titleTextGroup);
 
     // Post-processing
-    this.composer;
-    this.filmPass;
-    this.staticPass;
+    this.passes = [];
+    let renderPass = new THREE.RenderPass(this.scene, this.camera);
+    this.passes.push(renderPass);
 
-    // Scene Nodes
-    this.camera;
-    this.titleTextGroup;
-    this.mottoTextGroup;
-    this.mottoText;
+    let afterImagePass = new AfterimagePass(0.9);
+    this.passes.push(afterImagePass);
 
-    this.setupScene();
-    console.timeEnd('constructor');
-    console.groupEnd('ArcadeScreenRenderer:constructor');
+    this.alphaRampShader = new THREE.ShaderPass(AlphaRampShader);
+    this.passes.push(this.alphaRampShader);
+
+    let filmPass = new UniformShaderPass(THREE.FilmShader);
+    filmPass.setUniforms({
+      grayscale: 0,
+      sCount: 600,
+      sIntensity: 0.9,
+      nIntensity: 0.4,
+    });
+    this.passes.push(filmPass);
+
+    let staticPass = new UniformShaderPass(StaticShader);
+    staticPass.setUniforms({
+      amount: 0.08,
+      size: 2,
+    });
+    this.passes.push(staticPass);
+
+    let vignettePass = new UniformShaderPass(THREE.VignetteShader);
+    vignettePass.setUniforms({
+      offset: 0.3,
+      darkness: 3,
+    });
+    this.passes.push(vignettePass);
+
+    let radialDistortionPass = new UniformShaderPass(RadialDistortionShader);
+    let distortionHorizontalFOV = 65;
+    radialDistortionPass.setUniforms({
+      strength: 0.3,
+      height: Math.tan(THREE._Math.degToRad(distortionHorizontalFOV) / 2) / this.camera.aspect,
+      aspectRatio: this.camera.aspect,
+      cylindricalRatio: 2,
+    });
+    this.passes.push(radialDistortionPass);
+
+    let copyPass = new THREE.ShaderPass(THREE.CopyShader);
+    copyPass.renderToScreen = true;
+    this.passes.push(copyPass);
+
+    // Renderer / EffectComposer
+    this.renderer = new THREE.WebGLRenderer({
+      preserveDrawingBuffer: false,
+      alpha: true,
+    });
+    this.renderer.setPixelRatio(window.devicePixelRatio);
+    this.composer = new THREE.EffectComposer(this.renderer);
+    this.passes.forEach(pass => {
+      this.composer.addPass(pass);
+    });
   }
 
   render(cameraYRotation, cameraXRotation) {
@@ -62,20 +145,6 @@ export default class ArcadeScreenRenderer {
 
     let deltaTime = this.clock.getDelta();
     let elapsedTime = this.clock.getElapsedTime();
-
-    let cameraXRotSpeed = convertRange(cameraXRotation, -1, 1, 1, 2);
-
-    this.renderer.clear();
-    this.camera.rotateX((Math.PI / (180 / this.cameraRotationSpeed)) * cameraXRotSpeed * deltaTime);
-    this.camera.rotateY(
-      (cameraYRotation - this.camera.position.x) * 0.01 * this.cameraRotationSpeed * deltaTime
-    );
-
-    this.composer.render(deltaTime);
-  }
-
-  renderDeltaTime(cameraYRotation, cameraXRotation, deltaTime) {
-    if (!this.clock.running) this.clock.start();
 
     let cameraXRotSpeed = convertRange(cameraXRotation, -1, 1, 1, 2);
 
@@ -108,128 +177,14 @@ export default class ArcadeScreenRenderer {
     });
   }
 
-  // setup / object builders
-  setupScene() {
-    console.group('ArcadeScreenRenderer:setupScene');
-
-    console.time('new THREE.WebGLRenderer');
-    this.renderer = new THREE.WebGLRenderer({
-      preserveDrawingBuffer: false,
-      alpha: true,
-    });
-    this.renderer.setPixelRatio(window.devicePixelRatio);
-    console.log('window.devicePixelRatio', window.devicePixelRatio);
-    console.timeEnd('new THREE.WebGLRenderer');
-
-    this.scene = new THREE.Scene();
-
-    this.camera = this.createCamera();
-    this.camera.aspectRatio = this.aspectRatio;
-    this.scene.add(this.camera);
-
-    let particles = this.createParticles();
-    this.scene.add(particles);
-
-    // Post-processing
-    console.time('pp');
-    this.composer = new EffectComposer(this.renderer);
-
-    let renderPass = new RenderPass(this.scene, this.camera);
-    this.composer.addPass(renderPass);
-
-    let afterImagePass = new AfterimagePass(0.9);
-    this.composer.addPass(afterImagePass);
-
-    this.alphaRampShader = new ShaderPass(AlphaRampShader);
-    this.composer.addPass(this.alphaRampShader);
-
-    this.filmPass = new UniformShaderPass(FilmShader);
-    this.filmPass.setUniforms({
-      grayscale: 0,
-      sCount: 600,
-      sIntensity: 0.9,
-      nIntensity: 0.4,
-    });
-    this.composer.addPass(this.filmPass);
-
-    this.staticPass = new UniformShaderPass(StaticShader);
-    this.staticPass.setUniforms({
-      amount: 0.08,
-      size: 2,
-    });
-    this.composer.addPass(this.staticPass);
-
-    let vignettePass = new UniformShaderPass(VignetteShader);
-    vignettePass.setUniforms({
-      offset: 0.3,
-      darkness: 3,
-    });
-    this.composer.addPass(vignettePass);
-
-    let distortionHorizontalFOV = 65;
-    let radialDistortionPass = new UniformShaderPass(RadialDistortionShader);
-    radialDistortionPass.setUniforms({
-      strength: 0.3,
-      height: Math.tan(THREE._Math.degToRad(distortionHorizontalFOV) / 2) / this.camera.aspect,
-      aspectRatio: this.camera.aspect,
-      cylindricalRatio: 2,
-    });
-    this.composer.addPass(radialDistortionPass);
-
-    var copyPass = new ShaderPass(CopyShader);
-    copyPass.renderToScreen = true;
-    this.composer.addPass(copyPass);
-    console.timeEnd('pp');
-
-    console.time('text1');
-    let mottoTextGroup = this.textBuilder.build('- YOUNG PROFESSIONAL -');
-    mottoTextGroup.name = 'mottoTextGroup';
-    mottoTextGroup.position.z = -10;
-    mottoTextGroup.position.y = -2.25;
-    mottoTextGroup.position.x = 0;
-    mottoTextGroup.scale.x = 0.392857143;
-    mottoTextGroup.scale.y = 0.392857143;
-    mottoTextGroup.scale.z = 0.392857143;
-    this.camera.add(mottoTextGroup);
-    console.timeEnd('text1');
-
-    console.time('text2');
-    let titleTextGroup = this.textBuilder.build('SPENCER\nSTEERS');
-    titleTextGroup.name = 'titleTextGroup';
-    titleTextGroup.rotation.x = (-20 * Math.PI) / 180;
-    titleTextGroup.position.z = -10;
-    titleTextGroup.position.y = 2.0;
-    titleTextGroup.position.x = 0;
-    this.camera.add(titleTextGroup);
-    console.timeEnd('text2');
-
-    console.groupEnd('ArcadeScreenRenderer:setupScene');
-  }
-
-  createCamera(viewAngle = 45, aspectRatio = 3 / 4, nearClip = 0.1, farClip = 10000) {
-    return new THREE.PerspectiveCamera(viewAngle, aspectRatio, nearClip, farClip);
-  }
-
-  createParticles(count = 500) {
-    let radius = 300;
-
-    let pGeometry = new THREE.BufferGeometry();
-    let pMaterial = new THREE.PointsMaterial({ color: new THREE.Color(1.0, 0, 0), size: 3.0 });
-
-    let color = new THREE.Color(1.0, 0.0, 0.0);
-    let positions = [];
-    for (var p = 0; p < count; p++) {
-      let pX = this.particlePosition(radius);
-      let pY = this.particlePosition(radius);
-      let pZ = this.particlePosition(radius, 15);
-      positions.push(pX, pY, pZ);
-    }
-    pGeometry.addAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-    return new THREE.Points(pGeometry, pMaterial);
-  }
-
-  particlePosition(radius, minimum = 0) {
-    let dir = Math.random() * 2 - 1;
-    return dir * (radius - minimum) + Math.sign(dir) * minimum;
+  // Used when rendering still frames
+  _renderDeltaTime(cameraYRotation, cameraXRotation, deltaTime) {
+    let cameraXRotSpeed = convertRange(cameraXRotation, -1, 1, 1, 2);
+    this.renderer.clear();
+    this.camera.rotateX((Math.PI / (180 / this.cameraRotationSpeed)) * cameraXRotSpeed * deltaTime);
+    this.camera.rotateY(
+      (cameraYRotation - this.camera.position.x) * 0.01 * this.cameraRotationSpeed * deltaTime
+    );
+    this.composer.render(deltaTime);
   }
 }
