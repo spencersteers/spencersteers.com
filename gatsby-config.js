@@ -25,7 +25,7 @@ module.exports = {
       resolve: `gatsby-source-filesystem`,
       options: {
         name: `arcadeScreenImages`,
-        path: `${__dirname}/src/components/ArcadeScreen/images`,
+        path: `${__dirname}/src/components/ArcadeCabinet/images`,
       },
     },
     {

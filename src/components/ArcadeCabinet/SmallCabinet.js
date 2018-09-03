@@ -1,8 +1,9 @@
 import React from 'react';
-import { StaticQuery } from 'gatsby';
+import { StaticQuery, graphql } from 'gatsby';
 import { ARCADE_CABINET_WIDTH, SMALL_CABINET_HEIGHT } from './layoutConstants';
+import ScreenVideo from 'static/screen_cropped_1s.mp4';
 
-const SmallCabinet = ({ width, height, poster, videoSrc}) => {
+const SmallCabinet = ({ width, height, poster, videoSrc }) => {
   const padding = 20;
   return (
     <div
@@ -13,7 +14,7 @@ const SmallCabinet = ({ width, height, poster, videoSrc}) => {
         paddingLeft: padding,
         paddingRight: padding,
         paddingTop: padding,
-        margin: '0 auto'
+        margin: '0 auto',
       }}
     >
       <video
@@ -44,19 +45,17 @@ export default props => {
           }
         }
       `}
-      render={
-        data => {
-          return (
-            <SmallCabinet
-              width={ARCADE_CABINET_WIDTH}
-              height={SMALL_CABINET_HEIGHT}
-              videoSrc="/screen_cropped_1s.mp4"
-              poster={data.poster.childImageSharp.resize.src}
-              {...props}
-            />
-          );
-        }
-      }
+      render={data => {
+        return (
+          <SmallCabinet
+            width={ARCADE_CABINET_WIDTH}
+            height={SMALL_CABINET_HEIGHT}
+            videoSrc={ScreenVideo}
+            poster={data.poster.childImageSharp.resize.src}
+            {...props}
+          />
+        );
+      }}
     />
   );
 };

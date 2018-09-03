@@ -4,7 +4,9 @@ import { rhythm, scale } from '../utils/typography';
 import get from 'lodash/get';
 
 import Layout from '../components/Layout';
-import ArcadeScreen from '../components/ArcadeScreen';
+// import ArcadeScreen from '../components/ArcadeScreen';
+
+import { FullCabinet } from '../components/ArcadeCabinet';
 
 const Header = props => {
   let cabSrc = get(props, 'data.arcadeCabinet.childImageSharp.fixed.src');
@@ -25,8 +27,8 @@ const Header = props => {
         textAlign: 'center',
       }}
     >
-      <ArcadeScreen
-        arcadeCabinet={images.arcadeCabinet}
+      <FullCabinet
+        arcadeCabinetImg={images.arcadeCabinet}
         buttonSpriteSheetSrc={images.buttonSpriteSheet.src}
         buttonWidth={38}
         buttonHeight={23}

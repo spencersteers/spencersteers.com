@@ -183,7 +183,7 @@ export default class ArcadeScreenRenderer {
 
     console.time('text1');
     let mottoTextGroup = this.textBuilder.build('- YOUNG PROFESSIONAL -');
-    mottoTextGroup.name = "mottoTextGroup";
+    mottoTextGroup.name = 'mottoTextGroup';
     mottoTextGroup.position.z = -10;
     mottoTextGroup.position.y = -2.25;
     mottoTextGroup.position.x = 0;
@@ -195,7 +195,7 @@ export default class ArcadeScreenRenderer {
 
     console.time('text2');
     let titleTextGroup = this.textBuilder.build('SPENCER\nSTEERS');
-    titleTextGroup.name = "titleTextGroup";
+    titleTextGroup.name = 'titleTextGroup';
     titleTextGroup.rotation.x = (-20 * Math.PI) / 180;
     titleTextGroup.position.z = -10;
     titleTextGroup.position.y = 2.0;
