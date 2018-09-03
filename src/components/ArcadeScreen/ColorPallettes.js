@@ -33,7 +33,7 @@ export const blueIcePallette = {
   c3: new Color('#c6bfd2'),
   c4: new Color('#0084ff'),
   c5: new Color('#0038ff'),
-  c6: new Color('#00137c'),
+  c6: new Color('#020082'),
 };
 
 export const dirtPallette = {
