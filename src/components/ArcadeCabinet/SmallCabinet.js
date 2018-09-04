@@ -1,7 +1,7 @@
 import React from 'react';
 import { StaticQuery, graphql } from 'gatsby';
 import { ARCADE_CABINET_WIDTH, SMALL_CABINET_HEIGHT } from './layoutConstants';
-import ScreenVideo from 'static/screen_cropped_1s.mp4';
+import ScreenVideo from 'assets/screen_cropped_1s.mp4';
 
 const SmallCabinet = ({ width, height, poster, videoSrc }) => {
   const padding = 20;

@@ -1,10 +1,10 @@
 {
-  "name": "gatsby-starter-blog",
-  "description": "Starter Gatsby Blog",
-  "version": "1.0.0",
-  "author": "Kyle Mathews <mathews.kyle@gmail.com>",
+  "name": "spencersteers.com",
+  "description": "The Homepage of Spencer Steers",
+  "version": "0.0.1",
+  "author": "Spencer Steers <spencersteers@gmail.com>",
   "bugs": {
-    "url": "https://github.com/gatsbyjs/gatsby-starter-blog/issues"
+    "url": "https://github.com/spencersteers/spencersteers.com/issues"
   },
   "dependencies": {
     "gatsby": "^2.0.0-rc.9",
@@ -43,15 +43,12 @@
     "moment": "^2.22.2",
     "prettier": "^1.14.2"
   },
-  "homepage": "https://github.com/gatsbyjs/gatsby-starter-blog#readme",
-  "keywords": [
-    "gatsby"
-  ],
+  "homepage": "https://github.com/spencersteers/spencersteers.com#readme",
   "license": "MIT",
   "main": "n/a",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/gatsbyjs/gatsby-starter-blog.git"
+    "url": "git+https://github.com/spencersteers/spencersteers.com.git"
   },
   "scripts": {
     "dev": "gatsby develop",

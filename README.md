@@ -1,9 +1,9 @@
-# gatsby-starter-blog
-Gatsby starter for creating a blog
+# [spencersteers.com](https://spencersteers.com)
 
-Install this starter (assuming Gatsby is installed) by running from your CLI:
+Built with [Gatsby](https://www.gatsbyjs.org/).
 
-`gatsby new gatsby-blog https://github.com/gatsbyjs/gatsby-starter-blog`
+## License
 
-## Running in development
-`gatsby develop`
+Source code is licensed under [MIT](https://opensource.org/licenses/MIT).
+
+Blog posts are licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
