@@ -36,3 +36,13 @@ a svg {
   display: block;
   text-indent: -9999em;
 }
+
+.video-figure {
+  text-align: center;
+}
+
+figcaption {
+  margin-top: 5px;
+  font-size: 90%;
+  text-align: center;
+}

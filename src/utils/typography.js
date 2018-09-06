@@ -11,6 +11,10 @@ const typography = new Typography({
     'a, a:active, a:visited': {
       color: 'hsla(0, 0%, 100%, 0.9)',
     },
+    'h2,h3': {
+      marginTop: rhythm(1.75),
+      marginBottom: rhythm(1),
+    }
   }),
 });
 
