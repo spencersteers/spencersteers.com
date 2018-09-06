@@ -41,6 +41,11 @@ a svg {
   text-align: center;
 }
 
+.video-figure video {
+  width: 100%;
+  max-width: 800px;
+}
+
 figcaption {
   margin-top: 5px;
   font-size: 90%;
