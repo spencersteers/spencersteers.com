@@ -7,6 +7,7 @@
 }
 
 #arcade-screen-container canvas {
+  display: block;
   transform: translateZ(1px);
 }
 
