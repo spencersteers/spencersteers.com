@@ -31,9 +31,10 @@ class FullCabinet extends React.Component {
     let width = this.containerRef.current.offsetWidth;
     let height = width / this.props.screenAspectRatio;
 
-    if (window._arcadeScreen.isInitialized()) {
+    if (ArcadeScreenContext.getContext().isInitialized()) {
       ArcadeScreenContext.getContext().mount(this.containerRef.current, width, height);
-    } else {
+    }
+    else {
       this.containerRef.current.classList.add('fade');
       ArcadeScreenContext.getContext().mount(this.containerRef.current, width, height, () => {
         this.containerRef.current.classList.add('show');
@@ -64,8 +65,8 @@ class FullCabinet extends React.Component {
       (TOP_PANEL_HEIGHT_RATIO * ARCADE_CABINET_WIDTH) / ARCADE_CABINET_ASPECT_RATIO;
 
     let outerWidth = ARCADE_CABINET_WIDTH + arcadePadding * 2;
-    let screenWidth = outerWidth - arcadePadding * 2 - arcadePanelPaddingX * 2;
-    let screenHeight = screenWidth / this.props.screenAspectRatio;
+    let screenWidth = Math.ceil(outerWidth - arcadePadding * 2 - arcadePanelPaddingX * 2);
+    let screenHeight = Math.ceil(screenWidth / this.props.screenAspectRatio);
     return (
       <div
         aria-label="Arcade Cabinet"
@@ -101,7 +102,7 @@ class FullCabinet extends React.Component {
             ref={this.containerRef}
             style={{
               minWidth: screenWidth,
-              minHeight: screenHeight,
+              minHeight: screenHeight
             }}
           />
           <Controls
