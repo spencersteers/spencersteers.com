@@ -11,7 +11,7 @@ import { getRandomRange, convertRange, positionInSphere } from './utils';
 import TextBuilder from './TextBuilder';
 
 export default class ArcadeScreenRenderer {
-  constructor(aspectRatio) {
+  constructor(aspectRatio, width, height) {
     /** INIT **/
     this.scene = new THREE.Scene();
     this.clock = new THREE.Clock();
@@ -134,6 +134,7 @@ export default class ArcadeScreenRenderer {
       alpha: true,
     });
     this.renderer.setPixelRatio(window.devicePixelRatio);
+    this.renderer.setSize(width, height);
     this.composer = new THREE.EffectComposer(this.renderer);
     this.passes.forEach(pass => {
       this.composer.addPass(pass);

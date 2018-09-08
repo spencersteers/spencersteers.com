@@ -6,7 +6,7 @@ import { clamp, getRandomRange, convertRange, waitUntilReady } from './utils';
 import { allPallettes, convertPalletteToHexStrings } from './ColorPallettes';
 
 export default class ArcadeScreen {
-  constructor() {
+  constructor(width, height) {
     this.aspectRatio = 3 / 4;
     this.currentPalletteIndex = 0;
 
@@ -19,7 +19,7 @@ export default class ArcadeScreen {
         return;
       }
 
-      this.arcadeScreenRenderer = new ArcadeScreenRenderer(this.aspectRatio);
+      this.arcadeScreenRenderer = new ArcadeScreenRenderer(this.aspectRatio, width, height);
       this.arcadeScreenRenderer.setColorPallette(allPallettes[this.currentPalletteIndex]);
       this.arcadeScreenRenderer
         .getCanvasElement()
@@ -58,7 +58,7 @@ export default class ArcadeScreen {
 
     if (canvas.parentElement) console.error('ArcadeScreen is already mounted!');
 
-    this.arcadeScreenRenderer.setSize(width, height);
+    // this.arcadeScreenRenderer.setSize(width, height);
     rootElement.append(this.arcadeScreenRenderer.getCanvasElement());
     this.animate(0);
     onMounted ? onMounted() : null;

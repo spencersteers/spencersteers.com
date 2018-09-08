@@ -36,7 +36,7 @@ class FullCabinet extends React.Component {
       ArcadeScreenContext.getContext().mount(this.containerRef.current, width, height);
     }
     else {
-      ArcadeScreenContext.createContext();
+      ArcadeScreenContext.createContext(width, height);
       ArcadeScreenContext.getContext().mount(this.containerRef.current, width, height, () => {
         this.containerRef.current.classList.add('show');
       });
