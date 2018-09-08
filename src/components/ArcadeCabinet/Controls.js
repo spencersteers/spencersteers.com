@@ -19,7 +19,7 @@ class Controls extends React.Component {
           className="arcade-button left"
           aria-label="Arcade Left Button"
           onClick={this.props.onButtonLeft}
-          onTouchStart
+          onTouchStart={() => null}
           style={{
             backgroundImage: `url(${this.props.spriteSheetSrc})`,
             width: this.props.buttonWidth,
@@ -31,7 +31,7 @@ class Controls extends React.Component {
           className="arcade-button right"
           aria-label="Arcade Right Button"
           onClick={this.props.onButtonRight}
-          onTouchStart
+          onTouchStart={() => null}
           style={{
             backgroundImage: `url(${this.props.spriteSheetSrc})`,
             width: this.props.buttonWidth,

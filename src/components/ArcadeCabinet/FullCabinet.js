@@ -27,15 +27,16 @@ class FullCabinet extends React.Component {
     this.containerRef = React.createRef();
   }
 
-  componentDidMount() {
+  handleImageLoad() {
     let width = this.containerRef.current.offsetWidth;
     let height = width / this.props.screenAspectRatio;
 
-    if (ArcadeScreenContext.getContext().isInitialized()) {
+    if (ArcadeScreenContext.exists()) {
+      this.containerRef.current.classList.remove('fade');
       ArcadeScreenContext.getContext().mount(this.containerRef.current, width, height);
     }
     else {
-      this.containerRef.current.classList.add('fade');
+      ArcadeScreenContext.createContext();
       ArcadeScreenContext.getContext().mount(this.containerRef.current, width, height, () => {
         this.containerRef.current.classList.add('show');
       });
@@ -86,7 +87,8 @@ class FullCabinet extends React.Component {
         <Img
           fluid={this.props.arcadeCabinetImg}
           outerWrapperClassName="arcade-mask-outer-wrapper"
-          fadeIn={false}
+          fadeIn={true}
+          onLoad={() => this.handleImageLoad()}
         />
         <div
           className="arcade-panel-padding"
@@ -99,6 +101,7 @@ class FullCabinet extends React.Component {
         >
           <div
             id="arcade-screen-container"
+            className="fade"
             ref={this.containerRef}
             style={{
               minWidth: screenWidth,
