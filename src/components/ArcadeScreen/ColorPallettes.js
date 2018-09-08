@@ -1,4 +1,4 @@
-import { Color } from 'three-full';
+import { Color } from 'three-full/sources/math/Color';
 
 export const basePallette = {
   c1: new Color('rgb(255, 235, 235)'),

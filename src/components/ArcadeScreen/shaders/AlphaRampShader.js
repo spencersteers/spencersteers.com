@@ -1,4 +1,5 @@
-import { Color } from 'three-full';
+import { Color } from 'three-full/sources/math/Color';
+
 let AlphaRampShader = {
   uniforms: {
     tDiffuse: { value: null },

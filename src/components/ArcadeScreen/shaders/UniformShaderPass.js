@@ -1,4 +1,4 @@
-import { ShaderPass } from 'three-full';
+import { ShaderPass } from 'three-full/sources/postprocessing/ShaderPass';
 
 let UniformShaderPass = function(shader, timeUniformName = 'time') {
   ShaderPass.call(this, shader);

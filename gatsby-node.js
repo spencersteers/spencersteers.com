@@ -3,10 +3,6 @@ const Promise = require('bluebird')
 const path = require('path')
 const { createFilePath } = require('gatsby-source-filesystem')
 
-const gltf2Loader = require
-
-const isProd = process.env.NODE_ENV === 'production';
-
 exports.createPages = async ({ graphql, actions }) => {
   const { createPage } = actions
 
@@ -66,6 +62,17 @@ exports.onCreateNode = ({ node, actions, getNode }) => {
 }
 
 exports.onCreateWebpackConfig = ({ stage, getConfig, rules, loaders, actions }) => {
+  actions.setWebpackConfig({
+    module: {
+      rules: [
+        {
+          test: /\.glsl$/,
+          loader: 'webpack-glsl-loader'
+        }
+      ]
+    }
+  });
+
   if (stage === "build-html") {
     // modules depending on browser apis
     actions.setWebpackConfig({
@@ -73,13 +80,12 @@ exports.onCreateWebpackConfig = ({ stage, getConfig, rules, loaders, actions }) 
         rules: [
           {
             test: [
-              /three-full.*\.js$/,
-              /ArcadeScreen/,
+              /three-full.*\Detector.js$/
             ],
             use: [
               loaders.null()
             ],
-          }
+          },
         ]
       }
     });
