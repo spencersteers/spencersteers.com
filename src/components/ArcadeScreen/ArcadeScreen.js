@@ -24,14 +24,21 @@ export default class ArcadeScreen {
       this.arcadeScreenRenderer
         .getCanvasElement()
         .addEventListener('mousemove', this.handleMouseMove, false);
+      this.arcadeScreenRenderer
+        .getCanvasElement()
+        .addEventListener('touchmove', this.handleTouchMove, false);
+
       this.mount.ready();
     });
 
-    // mouse position over canvas normalized to -1 and 1
-    this._normalizedMouseX = 0;
-    this._normalizedMouseY = 0;
+    // input position over canvas normalized from -1 and 1
+    this._inputScreenCoord = {
+      x: 0,
+      y: 0,
+    };
 
     this.handleMouseMove = this.handleMouseMove.bind(this);
+    this.handleTouchMove = this.handleTouchMove.bind(this);
     this.animate = this.animate.bind(this);
 
     this._devCreateGUI();
@@ -62,22 +69,41 @@ export default class ArcadeScreen {
 
   animate(time) {
     this._requestAnimationFrameId = requestAnimationFrame(this.animate.bind(this));
-    this.arcadeScreenRenderer.render(this._normalizedMouseX, this._normalizedMouseY, time);
+    this.arcadeScreenRenderer.render(this._inputScreenCoord.x, this._inputScreenCoord.y, time);
   }
 
   handleMouseMove(event) {
-    let relativeMouseX = event.clientX - this.arcadeScreenRenderer.getCanvasElement().offsetLeft;
-    let relativeMouseY = event.clientY - this.arcadeScreenRenderer.getCanvasElement().offsetTop;
+    this._inputScreenCoord = this.inputCoordinateToScreenCoordinate(event.clientX, event.clientY);
+  }
 
-    let width = this.arcadeScreenRenderer.getCanvasElement().width;
-    let height = this.arcadeScreenRenderer.getCanvasElement().height;
+  handleTouchMove(event) {
+    if (event.changedTouches.length === 0) return;
 
-    this._normalizedMouseX = convertRange(relativeMouseX, 0, width, -1, 1);
-    this._normalizedMouseY = convertRange(relativeMouseY, 0, height, -1, 1);
+    let touch = event.changedTouches[0];
+    this._inputScreenCoord = this.inputCoordinateToScreenCoordinate(touch.clientX, touch.clientY);
+  }
+
+  inputCoordinateToScreenCoordinate(clientX, clientY) {
+    let relativeInputX = clientX - this.arcadeScreenRenderer.getCanvasElement().offsetLeft;
+    let relativeInputY = clientY - this.arcadeScreenRenderer.getCanvasElement().offsetTop;
+
+    let width = this.arcadeScreenRenderer.getCanvasElement().clientWidth;
+    let height = this.arcadeScreenRenderer.getCanvasElement().clientHeight;
+
+    return {
+      x: convertRange(relativeInputX, 0, width, -1, 1),
+      y: convertRange(relativeInputY, 0, height, -1, 1),
+    };
   }
 
   unmount() {
     cancelAnimationFrame(this._requestAnimationFrameId);
+    this.arcadeScreenRenderer
+      .getCanvasElement()
+      .removeEventListener('mousemove', this.handleMouseMove, false);
+    this.arcadeScreenRenderer
+      .getCanvasElement()
+      .removeEventListener('touchmove', this.handleTouchMove, false);
     this.arcadeScreenRenderer.getCanvasElement().remove();
   }
 
