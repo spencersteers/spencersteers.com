@@ -1,4 +1,4 @@
-import { Color } from 'three-full';
+import { Color } from 'three-full/sources/math/Color';
 
 function buildFragmentShader(colorChannel) {
   return `

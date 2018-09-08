@@ -1,4 +1,6 @@
-import { TextBufferGeometry, Object3D, Mesh } from 'three-full';
+import { TextBufferGeometry } from 'three-full/sources/geometries/TextGeometry';
+import { Object3D } from 'three-full/sources/core/Object3D';
+import { Mesh } from 'three-full/sources/objects/Mesh';
 
 export default class TextBuilder {
   constructor({ font, size, height, material }) {

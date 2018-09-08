@@ -1,4 +1,22 @@
-import * as THREE from 'three-full';
+import { Scene } from 'three-full/sources/scenes/Scene';
+import { Clock } from 'three-full/sources/core/Clock';
+import { PerspectiveCamera } from 'three-full/sources/cameras/PerspectiveCamera';
+import { BufferGeometry } from 'three-full/sources/core/BufferGeometry';
+import { Color } from 'three-full/sources/math/Color';
+import { Font } from 'three-full/sources/core/Font';
+import { PointsMaterial } from 'three-full/sources/materials/PointsMaterial';
+import { Float32BufferAttribute } from 'three-full/sources/core/BufferAttribute';
+import { Points } from 'three-full/sources/objects/Points';
+import { MeshBasicMaterial } from 'three-full/sources/materials/MeshBasicMaterial';
+import { ShaderPass } from 'three-full/sources/postprocessing/ShaderPass';
+import { RenderPass } from 'three-full/sources/postprocessing/RenderPass';
+import { VignetteShader } from 'three-full/sources/shaders/VignetteShader';
+import { FilmShader } from 'three-full/sources/shaders/FilmShader';
+import { CopyShader } from 'three-full/sources/shaders/CopyShader';
+import { _Math } from 'three-full/sources/math/Math';
+import { WebGLRenderer } from 'three-full/sources/renderers/WebGLRenderer';
+import { EffectComposer } from 'three-full/sources/postprocessing/EffectComposer';
+
 import HelvetikerRegularFont from 'three-full/sources/fonts/helvetiker_regular.typeface.json';
 
 import { UniformShaderPass } from './shaders/UniformShaderPass';
@@ -13,8 +31,8 @@ import TextBuilder from './TextBuilder';
 export default class ArcadeScreenRenderer {
   constructor(aspectRatio, width, height) {
     /** INIT **/
-    this.scene = new THREE.Scene();
-    this.clock = new THREE.Clock();
+    this.scene = new Scene();
+    this.clock = new Clock();
 
     // camera
     this.aspectRatio = aspectRatio;
@@ -25,7 +43,7 @@ export default class ArcadeScreenRenderer {
       nearClip: 0.1,
       farClip: 10000,
     };
-    this.camera = new THREE.PerspectiveCamera(
+    this.camera = new PerspectiveCamera(
       cameraParams.viewAngle,
       cameraParams.aspectRatio,
       cameraParams.nearClip,
@@ -35,8 +53,8 @@ export default class ArcadeScreenRenderer {
 
     // particles
     let radius = 300;
-    let pGeometry = new THREE.BufferGeometry();
-    let pMaterial = new THREE.PointsMaterial({ color: new THREE.Color(1.0, 0, 0), size: 3.0 });
+    let pGeometry = new BufferGeometry();
+    let pMaterial = new PointsMaterial({ color: new Color(1.0, 0, 0), size: 3.0 });
     let positions = [];
     for (var p = 0; p < 500; p++) {
       let pX = positionInSphere(radius);
@@ -44,8 +62,8 @@ export default class ArcadeScreenRenderer {
       let pZ = positionInSphere(radius, 15);
       positions.push(pX, pY, pZ);
     }
-    pGeometry.addAttribute('position', new THREE.Float32BufferAttribute(positions, 3));
-    let particles = new THREE.Points(pGeometry, pMaterial);
+    pGeometry.addAttribute('position', new Float32BufferAttribute(positions, 3));
+    let particles = new Points(pGeometry, pMaterial);
     this.scene.add(particles);
 
     // text
@@ -55,12 +73,12 @@ export default class ArcadeScreenRenderer {
       height: 0.4,
     };
     this.textBuilder = new TextBuilder({
-      font: new THREE.Font(HelvetikerRegularFont),
+      font: new Font(HelvetikerRegularFont),
       size: textParams.titleSize,
       height: textParams.height,
       material: [
-        new THREE.MeshBasicMaterial({ color: new THREE.Color(0.0, 0.0, 1.0), transparent: false }),
-        new THREE.MeshBasicMaterial({ color: new THREE.Color(0.0, 0.0, 0.5), transparent: false }),
+        new MeshBasicMaterial({ color: new Color(0.0, 0.0, 1.0), transparent: false }),
+        new MeshBasicMaterial({ color: new Color(0.0, 0.0, 0.5), transparent: false }),
       ],
     });
 
@@ -82,16 +100,16 @@ export default class ArcadeScreenRenderer {
 
     // Post-processing
     this.passes = [];
-    let renderPass = new THREE.RenderPass(this.scene, this.camera);
+    let renderPass = new RenderPass(this.scene, this.camera);
     this.passes.push(renderPass);
 
     let afterImagePass = new AfterimagePass(0.9);
     this.passes.push(afterImagePass);
 
-    this.alphaRampShader = new THREE.ShaderPass(AlphaRampShader);
+    this.alphaRampShader = new ShaderPass(AlphaRampShader);
     this.passes.push(this.alphaRampShader);
 
-    let filmPass = new UniformShaderPass(THREE.FilmShader);
+    let filmPass = new UniformShaderPass(FilmShader);
     filmPass.setUniforms({
       grayscale: 0,
       sCount: 600,
@@ -107,7 +125,7 @@ export default class ArcadeScreenRenderer {
     });
     this.passes.push(staticPass);
 
-    let vignettePass = new UniformShaderPass(THREE.VignetteShader);
+    let vignettePass = new UniformShaderPass(VignetteShader);
     vignettePass.setUniforms({
       offset: 0.3,
       darkness: 3,
@@ -118,24 +136,24 @@ export default class ArcadeScreenRenderer {
     let distortionHorizontalFOV = 65;
     radialDistortionPass.setUniforms({
       strength: 0.3,
-      height: Math.tan(THREE._Math.degToRad(distortionHorizontalFOV) / 2) / this.camera.aspect,
+      height: Math.tan(_Math.degToRad(distortionHorizontalFOV) / 2) / this.camera.aspect,
       aspectRatio: this.camera.aspect,
       cylindricalRatio: 2,
     });
     this.passes.push(radialDistortionPass);
 
-    let copyPass = new THREE.ShaderPass(THREE.CopyShader);
+    let copyPass = new ShaderPass(CopyShader);
     copyPass.renderToScreen = true;
     this.passes.push(copyPass);
 
     // Renderer / EffectComposer
-    this.renderer = new THREE.WebGLRenderer({
+    this.renderer = new WebGLRenderer({
       preserveDrawingBuffer: false,
       alpha: true,
     });
     this.renderer.setPixelRatio(window.devicePixelRatio);
     this.renderer.setSize(width, height);
-    this.composer = new THREE.EffectComposer(this.renderer);
+    this.composer = new EffectComposer(this.renderer);
     this.passes.forEach(pass => {
       this.composer.addPass(pass);
     });

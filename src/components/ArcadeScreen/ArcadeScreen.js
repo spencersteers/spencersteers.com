@@ -1,4 +1,4 @@
-import { Detector } from 'three-full';
+import { Detector } from 'three-full/sources/helpers/Detector';
 import padStart from 'lodash/padStart';
 
 import ArcadeScreenRenderer from './ArcadeScreenRenderer';
@@ -34,9 +34,7 @@ export default class ArcadeScreen {
     this.handleMouseMove = this.handleMouseMove.bind(this);
     this.animate = this.animate.bind(this);
 
-    if (process.env.NODE_ENV !== 'production') {
-      this.createGUI();
-    }
+    this._devCreateGUI();
   }
 
   nextPallette() {
@@ -57,8 +55,6 @@ export default class ArcadeScreen {
     let canvas = this.arcadeScreenRenderer.getCanvasElement();
 
     if (canvas.parentElement) console.error('ArcadeScreen is already mounted!');
-
-    // this.arcadeScreenRenderer.setSize(width, height);
     rootElement.append(this.arcadeScreenRenderer.getCanvasElement());
     this.animate(0);
     onMounted ? onMounted() : null;
@@ -89,70 +85,69 @@ export default class ArcadeScreen {
     return this.arcadeScreenRenderer !== null && this.arcadeScreenRenderer !== undefined;
   }
 
-  createGUI() {
-    const dat = require('dat.gui');
-    let colorPallette = convertPalletteToHexStrings(allPallettes[this.currentPalletteIndex]);
-    let gui = new dat.GUI({ name: 'Color Pallette' });
-    Object.keys(colorPallette).forEach((key, value) => {
-      gui.addColor(colorPallette, key).onChange(val => {
-        this.arcadeScreenRenderer.setColorPallette(colorPallette);
+  _devCreateGUI() {
+    if (process.env.NODE_ENV !== 'production') {
+      const dat = require('dat.gui');
+      let colorPallette = convertPalletteToHexStrings(allPallettes[this.currentPalletteIndex]);
+      let gui = new dat.GUI({ name: 'Color Pallette' });
+      Object.keys(colorPallette).forEach((key, value) => {
+        gui.addColor(colorPallette, key).onChange(val => {
+          this.arcadeScreenRenderer.setColorPallette(colorPallette);
+        });
       });
-    });
 
-    let printButton = {
-      print: function() {
-        console.log(JSON.stringify(colorPallette, '', 2));
-      },
-    };
-    gui.add(printButton, 'print');
+      let printButton = {
+        print: function() {
+          console.log(JSON.stringify(colorPallette, '', 2));
+        },
+      };
+      gui.add(printButton, 'print');
+    }
   }
 
-  // Rendering still frames
-  _exportImages(frames, fps = 60) {
-    if (process.env.NODE_ENV === 'production') {
-      return;
-    }
-
-    cancelAnimationFrame(this._requestAnimationFrameId);
-    setTimeout(() => {
-      let { width, height } = this.arcadeScreenRenderer.getSize();
-      let canvas = this.arcadeScreenRenderer.getCanvasElement();
-      let deltaTime = 1 / fps;
-      for (let i = 0; i < frames; ++i) {
-        this.arcadeScreenRenderer.renderDeltaTime(0, 0, deltaTime);
-        let linkTitle = `Frame_${padStart(i, 3, '0')}.png`;
-        let downloadLink = document.createElement('a');
-        downloadLink.textContent = linkTitle;
-        downloadLink.setAttribute('download', linkTitle);
-        downloadLink.setAttribute(
-          'href',
-          canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream')
-        );
-        downloadLink.setAttribute('style', 'display: block; padding-bottom: 5px');
-        document.body.append(downloadLink);
-      }
-
-      let batches = {};
-      let i = 0;
-      let k = 0;
-      document.querySelectorAll('a').forEach(element => {
-        if (!batches[k]) batches[k] = [];
-        if (element.parentNode == document.body) {
-          batches[k].push(element);
-          ++i;
-
-          if (i > 4) {
-            let downloadBatch = batches[k];
-            setTimeout(() => {
-              downloadBatch.forEach(element => element.click());
-            }, 5000 * k);
-            k += 1;
-            i = 0;
-            batches[k] = [];
-          }
+  _devRenderFrames(frames, fps = 60) {
+    if (process.env.NODE_ENV !== 'production') {
+      cancelAnimationFrame(this._requestAnimationFrameId);
+      setTimeout(() => {
+        let { width, height } = this.arcadeScreenRenderer.getSize();
+        let canvas = this.arcadeScreenRenderer.getCanvasElement();
+        let deltaTime = 1 / fps;
+        for (let i = 0; i < frames; ++i) {
+          this.arcadeScreenRenderer._renderDeltaTime(0, 0, deltaTime);
+          let linkTitle = `Frame_${padStart(i, 3, '0')}.png`;
+          let downloadLink = document.createElement('a');
+          downloadLink.textContent = linkTitle;
+          downloadLink.setAttribute('download', linkTitle);
+          downloadLink.setAttribute(
+            'href',
+            canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream')
+          );
+          downloadLink.setAttribute('style', 'display: block; padding-bottom: 5px');
+          document.body.append(downloadLink);
         }
-      });
-      console.log('batches', batches);
-    }, 1000);
+
+        let batches = {};
+        let i = 0;
+        let k = 0;
+        document.querySelectorAll('a').forEach(element => {
+          if (!batches[k]) batches[k] = [];
+          if (element.parentNode == document.body) {
+            batches[k].push(element);
+            ++i;
+
+            if (i > 4) {
+              let downloadBatch = batches[k];
+              setTimeout(() => {
+                downloadBatch.forEach(element => element.click());
+              }, 5000 * k);
+              k += 1;
+              i = 0;
+              batches[k] = [];
+            }
+          }
+        });
+        console.log('batches', batches);
+      }, 1000);
+    }
   }
 }

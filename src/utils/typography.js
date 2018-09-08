@@ -14,7 +14,7 @@ const typography = new Typography({
     'h2,h3': {
       marginTop: rhythm(1.75),
       marginBottom: rhythm(1),
-    }
+    },
   }),
 });
 

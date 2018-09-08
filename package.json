@@ -31,7 +31,6 @@
     "react-dom": "^16.5.0",
     "react-helmet": "^5.2.0",
     "react-typography": "^0.16.13",
-    "three-bmfont-text": "^2.3.0",
     "three-full": "^8.0.0",
     "typography": "^0.16.17"
   },
@@ -42,7 +41,8 @@
     "expose-loader": "^0.7.5",
     "gh-pages": "^1.2.0",
     "moment": "^2.22.2",
-    "prettier": "^1.14.2"
+    "prettier": "^1.14.2",
+    "webpack-glsl-loader": "^1.0.1"
   },
   "homepage": "https://github.com/spencersteers/spencersteers.com#readme",
   "license": "MIT",
