@@ -11,16 +11,11 @@ import { PlaneBufferGeometry } from 'three-full/sources/geometries/PlaneGeometry
 import { OrthographicCamera } from 'three-full/sources/cameras/OrthographicCamera';
 import { Mesh } from 'three-full/sources/objects/Mesh';
 import { MeshBasicMaterial } from 'three-full/sources/materials/MeshBasicMaterial';
-import {
-  LinearFilter,
-  NearestFilter,
-  RGBAFormat
-} from 'three-full/sources/constants';
+import { LinearFilter, NearestFilter, RGBAFormat } from 'three-full/sources/constants';
 import { AfterimageShader } from './AfterimageShader';
 
 let AfterimagePass = function(damp) {
   Pass.call(this);
-
 
   this.shader = AfterimageShader;
 

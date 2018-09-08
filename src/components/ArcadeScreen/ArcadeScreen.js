@@ -34,7 +34,6 @@ export default class ArcadeScreen {
     this.handleMouseMove = this.handleMouseMove.bind(this);
     this.animate = this.animate.bind(this);
 
-
     this._devCreateGUI();
   }
 

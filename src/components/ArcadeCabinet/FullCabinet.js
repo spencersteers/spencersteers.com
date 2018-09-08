@@ -34,8 +34,7 @@ class FullCabinet extends React.Component {
     if (ArcadeScreenContext.exists()) {
       this.containerRef.current.classList.remove('fade');
       ArcadeScreenContext.getContext().mount(this.containerRef.current, width, height);
-    }
-    else {
+    } else {
       ArcadeScreenContext.createContext(width, height);
       ArcadeScreenContext.getContext().mount(this.containerRef.current, width, height, () => {
         this.containerRef.current.classList.add('show');
@@ -105,7 +104,7 @@ class FullCabinet extends React.Component {
             ref={this.containerRef}
             style={{
               minWidth: screenWidth,
-              minHeight: screenHeight
+              minHeight: screenHeight,
             }}
           />
           <Controls

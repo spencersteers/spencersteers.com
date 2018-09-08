@@ -8,13 +8,15 @@ class Controls extends React.Component {
 
   render() {
     return (
-      <div style={{
-        position: 'relative',
-        width: '100%',
-        top: '-12px',
-        padding: '0 40px',
-        transform: 'translateZ(1px)'
-       }}>
+      <div
+        style={{
+          position: 'relative',
+          width: '100%',
+          top: '-12px',
+          padding: '0 40px',
+          transform: 'translateZ(1px)',
+        }}
+      >
         <button
           className="arcade-button left"
           aria-label="Arcade Left Button"

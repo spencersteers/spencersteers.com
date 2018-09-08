@@ -17,8 +17,6 @@ import { _Math } from 'three-full/sources/math/Math';
 import { WebGLRenderer } from 'three-full/sources/renderers/WebGLRenderer';
 import { EffectComposer } from 'three-full/sources/postprocessing/EffectComposer';
 
-
-
 import HelvetikerRegularFont from 'three-full/sources/fonts/helvetiker_regular.typeface.json';
 
 import { UniformShaderPass } from './shaders/UniformShaderPass';
