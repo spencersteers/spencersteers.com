@@ -36,6 +36,7 @@ export const blogPostFragment = graphql`
   fragment BlogPost on MarkdownRemark {
     id
     html
+    excerpt
     fields {
       slug
     }

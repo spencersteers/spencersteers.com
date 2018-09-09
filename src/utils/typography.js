@@ -6,10 +6,10 @@ const typography = new Typography({
   baseLineHeight: 1.666,
   headerFontFamily: ['-apple-system', 'sans-serif'],
   bodyFontFamily: ['-apple-system', 'sans-serif'],
-  bodyColor: 'hsla(0, 0%, 100%, 0.9)',
+  bodyColor: '#e0e0e1',
   overrideStyles: ({ adjustFontSizeTo, scale, rhythm }, options) => ({
     'a, a:active, a:visited': {
-      color: 'hsla(0, 0%, 100%, 0.9)',
+      color: '#e0e0e1',
     },
     'h2,h3': {
       marginTop: rhythm(1.75),
