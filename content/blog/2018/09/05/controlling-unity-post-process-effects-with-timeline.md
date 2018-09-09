@@ -3,9 +3,10 @@ title: Controlling Unity Post Process Effects with Timeline
 date: "2018-09-05"
 ---
 
-*__- Code and example scene available on [GitHub](https://github.com/spencersteers/unity-post-processing-playable) -__*
-
 Over the summer I have been getting back into Unity development after being away from it for about 2 years or so. Since then a lot of new features have been added and I being someone who is a bit addicted to updates, patch notes, and changelogs I wanted to spend some time exploring a [Timeline](https://docs.unity3d.com/Manual/TimelineSection.html) and [Post-processing (v2)](https://github.com/Unity-Technologies/PostProcessing). 
+
+> An example project and all the code posted here is available on [GitHub](https://github.com/spencersteers/unity-post-processing-playable).
+> Feel free to try it out yourself or create an issue if you run into any problems.
 
 My current Unity project uses a fair amount of Post-processing and I wanted a way to smoothly transition between effects. Extending Timeline seemed to be a great way to to accomplish this and would also integrate into the existing workflow my designer and I use to build cutscenes and other visual effects.
 

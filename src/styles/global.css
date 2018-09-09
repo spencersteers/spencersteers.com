@@ -52,3 +52,16 @@ figcaption {
   font-size: 90%;
   text-align: center;
 }
+
+article blockquote {
+  background: #2c303a;
+  border: 1px solid #17191d;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.gatsby-highlight {
+  border: 1px solid #17191d;
+  border-radius: 5px;
+  background: #2c303a;
+}
