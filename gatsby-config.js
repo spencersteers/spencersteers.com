@@ -78,6 +78,7 @@ module.exports = {
         omitGoogleFont: true,
       },
     },
+    `gatsby-plugin-glamor`,
     `gatsby-plugin-netlify`
   ],
 }
