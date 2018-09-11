@@ -7,6 +7,7 @@ import Page from '../components/Page';
 import Layout from '../components/Layout';
 import BlogPost from '../components/BlogPost';
 import Header from '../components/Header';
+import Nav from '../components/Nav';
 import Divider from '../components/Divider';
 
 import { rhythm } from '../utils/typography';
@@ -21,7 +22,9 @@ class Index extends React.Component {
     return (
       <Page title={title} description={description} url={siteUrl} className="front">
         <Header />
-        <Layout location={this.props.location}>
+        <Nav style={{ marginTop: `${rhythm(1.5)}` }} />
+        <Divider width={rhythm(10)} style={{ margin: `${rhythm(0.5)} auto 0 auto` }} />
+        <Layout>
           {posts.map(({ node }) => (
             <React.Fragment key={node.fields.slug}>
               <BlogPost post={node} />
