@@ -79,6 +79,7 @@ module.exports = {
       },
     },
     `gatsby-plugin-glamor`,
+    `gatsby-plugin-netlify-cache`,
     `gatsby-plugin-netlify`
   ],
 }
