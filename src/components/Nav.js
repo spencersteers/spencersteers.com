@@ -5,7 +5,6 @@ const Nav = (props) => {
   return (
     <nav {...props} css={{
       ...scale(1 / 6),
-      color: '#b1b1b1',
       textAlign: 'center',
       '& a, & a:active, & a:visited': {
         color: 'inherit',
