@@ -54,10 +54,10 @@ class FullCabinet extends React.Component {
     let arcadePadding = 20;
     let arcadePaddingBottom = 90;
 
-    let screenOversizeWidth = 15;
-    let screenOversizeHeight = 20;
+    let screenOversizeWidth = 16;
+    let screenOversizeHeight = 21;
 
-    let arcadePanelPaddingX = SIDE_PANEL_WIDTH_RATIO * ARCADE_CABINET_WIDTH - screenOversizeWidth;
+    let arcadePanelPaddingX = Math.floor(SIDE_PANEL_WIDTH_RATIO * ARCADE_CABINET_WIDTH - screenOversizeWidth);
     let arcadePanelPaddingTop =
       (TOP_PANEL_HEIGHT_RATIO * ARCADE_CABINET_WIDTH) / ARCADE_CABINET_ASPECT_RATIO -
       screenOversizeHeight;
@@ -73,7 +73,7 @@ class FullCabinet extends React.Component {
         className="arcade-cabinet"
         style={{
           height: '100%',
-          width: outerWidth,
+          width: outerWidth  + 2,
           backgroundColor: '#262931',
           paddingLeft: arcadePadding,
           paddingRight: arcadePadding,
@@ -84,9 +84,9 @@ class FullCabinet extends React.Component {
         }}
       >
         <Img
-          fluid={this.props.arcadeCabinetImg}
+          fixed={this.props.arcadeCabinetImg}
           outerWrapperClassName="arcade-mask-outer-wrapper"
-          fadeIn={true}
+          fadeIn={false}
           onLoad={() => this.handleImageLoad()}
         />
         <div
@@ -130,14 +130,14 @@ export default props => {
     <StaticQuery
       query={graphql`
         query {
-          arcadeCabinet: file(relativePath: { eq: "ArcadeCabinet_RoundedRoughSmall.png" }) {
+          arcadeCabinet: file(relativePath: { eq: "ArcadeCabinet_RoundedRoughSmall_NoTransparency.png" }) {
             childImageSharp {
-              fluid(maxWidth: 300) {
+              fixed(width: 300) {
                 base64
-                aspectRatio
+                width
+                height
                 src
                 srcSet
-                sizes
               }
             }
           }
@@ -153,7 +153,7 @@ export default props => {
       render={data => {
         return (
           <FullCabinet
-            arcadeCabinetImg={data.arcadeCabinet.childImageSharp.fluid}
+            arcadeCabinetImg={data.arcadeCabinet.childImageSharp.fixed}
             buttonSpriteSheetSrc={data.buttonSpriteSheet.childImageSharp.fixed.src}
             {...props}
           />
