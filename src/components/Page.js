@@ -16,6 +16,7 @@ class Page extends React.Component {
           <meta property="og:description" content={description} />
           <meta property="og:url" content={url} />
           <meta property="og:type" content="website" />
+          <meta name="theme-color" content="#1F2228" />
         </Helmet>
         {children}
       </div>
