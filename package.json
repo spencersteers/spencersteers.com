@@ -43,7 +43,7 @@
     "eslint-plugin-react": "^7.11.1",
     "expose-loader": "^0.7.5",
     "gh-pages": "^1.2.0",
-    "moment": "^2.22.2",
+    "moment": "^2.29.4",
     "prettier": "^1.14.2",
     "webpack-glsl-loader": "^1.0.1"
   },
