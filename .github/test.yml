@@ -12,4 +12,4 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - id: echo
-        run: echo 'test ref${{ github.ref }}'
+        run: echo 'touch test ref${{ github.ref }}'
